@@ -74,6 +74,14 @@
 						'active' : true
 					},
 					{
+						'title' : 'Amplitude Bias',
+						'slug' : 'amp_bias',
+						'value' : 0,
+						'min' : -100,
+						'max' : 100,
+						'active' : true
+					},
+					{
 						'title' : 'Base Frequency',
 						'slug' : 'base_freq',
 						'value' : 18,

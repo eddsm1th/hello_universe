@@ -72,7 +72,7 @@
 
 		computed: {
 			value_as_percent_of_min_and_max () {
-				return this.value / this.max * 100;
+				return ( ( this.value - this.min ) / ( this.max - this.min ) ) * 100;
 			},
 
 			percent_per_pixel () {
