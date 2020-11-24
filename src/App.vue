@@ -1,27 +1,15 @@
 <template>
     <main class="options">
         <accordion
-            :content="{
-                'title' : 'Planet Data',
-                'cta_content' : 'Generate Planet',
-            }"
-            :child_component="'planetDataSelector'"
-            v-on="$listeners"
-            @dispatch_planet_generation_event="dispatch_planet_generation_event"
-        ></accordion>
-
-        <accordion
-            :content="{
-                'title' : 'Colour Data',
-                'cta_content' : 'Generate Colours',
-            }"
-            :child_component="'colourDataSelector'"
+            v-for="accordion, index in accordions"
+            :key="index"
+            :content="accordion.content"
+            :child_component="accordion.child_component"
         ></accordion>
     </main>
 </template>
 
 <script>
-    import { create_planet } from './js-components/planet.js';
     import accordion from './vue-components/Accordion.vue';
 
     export default {
@@ -33,16 +21,24 @@
 
         data () {
             return {
-                selected_planet_data: {},
-                selected_colour_data: []
+                accordions: [
+                    {
+                        'content' : {
+                            'title' : 'Planet Data',
+                            'cta_content' : 'Generate Planet'
+                        },
+                        'child_component' : 'planetDataSelector'
+                    },
+                    {
+                        'content' : {
+                            'title' : 'Colour Data',
+                            'cta_content' : 'Generate Colours'
+                        },
+                        'child_component' : 'colourDataSelector'
+                    }
+                ]
             }
         },
-
-        methods: {
-            dispatch_planet_generation_event ( data ) {
-                create_planet( data );
-            }
-        }
     };
 </script>
 

@@ -18,27 +18,27 @@ const 	use_colours = true,
 		apply_amp = true,
 		colour_threshholds = [
 			{
-				'threshhold' : 92,
+				'threshhold' : 90,
 				'colour' : 'white'
 			},
 			{
-				'threshhold' : 86,
+				'threshhold' : 80,
 				'colour' : 'lightgrey'
 			},
 			{
-				'threshhold' : 76,
+				'threshhold' : 60,
 				'colour' : 'saddlebrown'
 			},
 			{
-				'threshhold' : 60,
+				'threshhold' : 30,
 				'colour' : 'forestgreen'
 			},
 			{
-				'threshhold' : 55,
+				'threshhold' : 20,
 				'colour' : 'khaki'
 			},
 			{
-				'threshhold' : 30,
+				'threshhold' : 10,
 				'colour' : 'blue'
 			},
 			{
@@ -187,6 +187,9 @@ export function create_planet ( layer_options ) {
 		}
 
 		apply_drag_controls( scene );
+
+		const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+		scene.add( directionalLight );
 
 		function animate() {
 			requestAnimationFrame( animate );

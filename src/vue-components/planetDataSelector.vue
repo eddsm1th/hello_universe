@@ -22,6 +22,7 @@
 </template>
 
 <script>
+	import { create_planet } from './../js-components/planet.js';
 	import planetDataOption from './planetDataOption.vue';
 
 	export default {
@@ -44,7 +45,7 @@
 
 				this.data_options.forEach( ( item ) => data[ item.slug ] = Math.round( item.value ) );
 
-				this.$emit( 'dispatch_planet_generation_event', data );
+				create_planet( data );
 	        }
 		},
 
@@ -60,7 +61,7 @@
 					{
 						'title' : 'Base Amplitude',
 						'slug' : 'base_amp',
-						'value' : 40,
+						'value' : 60,
 						'min' : 0,
 						'max' : 200,
 						'active' : true
@@ -76,7 +77,7 @@
 					{
 						'title' : 'Amplitude Bias',
 						'slug' : 'amp_bias',
-						'value' : 0,
+						'value' : 28,
 						'min' : -100,
 						'max' : 100,
 						'active' : true
