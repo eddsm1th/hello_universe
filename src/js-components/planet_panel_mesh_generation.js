@@ -141,7 +141,7 @@ const generate_mesh = ( layer_options, amount_to_skip, final_freq_count, layer_i
 // Get an amplitude base on current generation stage
 const generate_point_amp = ( layer_options, i ) => {
 	const 	amp_multiplier = ( layer_options.base_amp * ( 1 / Math.pow( layer_options.amp_diff, i ) ) ),
-			pre_amp =  get_amp_bias( Math.random(), layer_options ) * amp_multiplier - ( amp_multiplier / 2 );
+			pre_amp = ( layer_options.amp_bias == 0 ? Math.random() : get_amp_bias( Math.random(), layer_options ) ) * amp_multiplier - ( amp_multiplier / 2 );
 
 	return pre_amp;
 }

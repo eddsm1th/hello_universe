@@ -21,15 +21,15 @@ const 	use_colours = true,
 				'colour' : 'white'
 			},
 			{
-				'threshhold' : 80,
+				'threshhold' : 85,
 				'colour' : 'lightgrey'
 			},
 			{
-				'threshhold' : 60,
+				'threshhold' : 75,
 				'colour' : 'saddlebrown'
 			},
 			{
-				'threshhold' : 30,
+				'threshhold' : 55,
 				'colour' : 'forestgreen'
 			},
 			{
@@ -53,15 +53,29 @@ const map_data_onto_sphere = ( grid_data, layer_options, final_freq_count ) => {
 	const 	quadrant_cutoff_index = Math.ceil( final_freq_count / 2 ),
 			panel_quadrant_one = [...grid_data].slice( 0, quadrant_cutoff_index ).map( ( item ) => [...item].slice( 0, quadrant_cutoff_index ) );
 
-	grid_data.forEach( ( quadrant_row, index ) => {
+	panel_quadrant_one.forEach( ( quadrant_row, index ) => {
 		quadrant_row.forEach( ( quadrant_row_index, sub_index ) => {
 			const 	xz_length_to_center = ( quadrant_row_index.x * quadrant_row_index.x ) + ( quadrant_row_index.z * quadrant_row_index.z ),
 					xzy_length_to_center = Math.sqrt( ( quadrant_row_index.y * quadrant_row_index.y ) + xz_length_to_center ),
-					coords_multiplier =  layer_options.radius / ( xzy_length_to_center - quadrant_row_index.amp_value );
+					mirrored_column_index = final_freq_count - 1 - sub_index,
+					mirrored_row_index = final_freq_count - 1 - index;
 
-			quadrant_row_index.y = quadrant_row_index.y * coords_multiplier;
-			quadrant_row_index.x = quadrant_row_index.x * coords_multiplier; 
-			quadrant_row_index.z = quadrant_row_index.z * coords_multiplier; 
+			[
+				grid_data[ index ][ sub_index ],
+				grid_data[ index ][ mirrored_column_index ],
+				grid_data[ mirrored_row_index ][ sub_index ],
+				grid_data[ mirrored_row_index ][ mirrored_column_index ],
+			].forEach( inst => {
+				if ( !inst.c2s_mapped ) {
+					const coords_multiplier = layer_options.radius / ( xzy_length_to_center - inst.amp_value );
+
+					inst.y = inst.y * coords_multiplier;
+					inst.x = inst.x * coords_multiplier; 
+					inst.z = inst.z * coords_multiplier; 
+
+					inst[ 'c2s_mapped' ] = true;
+				}
+			} );
 		} );
 	} );
 }
@@ -118,7 +132,7 @@ const plot_points = ( grid_data, final_freq_count, layer_options, rotation_value
 
 	scene.add( terrain );
 
-	const s_geometry = new THREE.SphereGeometry( ( layer_options.radius - ( layer_options.base_amp / 2 ) ) + layer_options.water_level, final_freq_count / 2, final_freq_count / 2 );
+	const s_geometry = new THREE.SphereGeometry( ( layer_options.radius - ( layer_options.base_amp / 2 ) ) + ( layer_options.base_amp * ( layer_options.water_level / 100 ) ), final_freq_count / 2, final_freq_count / 2 );
 	const s_material = new THREE.MeshLambertMaterial( {
 		color: 'blue',
 		opacity: 0.25,
@@ -205,5 +219,7 @@ export function create_planet ( layer_options ) {
 			renderer.render( scene, camera );
 		}
 		animate();
+
+		return grid_data;
 	}
 }

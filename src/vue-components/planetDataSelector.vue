@@ -45,7 +45,7 @@
 
 				this.data_options.forEach( ( item ) => data[ item.slug ] = Math.round( item.value ) );
 
-				create_planet( data );
+				this.grid_data = create_planet( data );
 	        }
 		},
 
@@ -57,6 +57,7 @@
 
 		data () {
 			return {
+				grid_data: null,
 				data_options: [
 					{
 						'title' : 'Base Amplitude',
@@ -77,7 +78,7 @@
 					{
 						'title' : 'Amplitude Bias',
 						'slug' : 'amp_bias',
-						'value' : 28,
+						'value' : 0,
 						'min' : -100,
 						'max' : 100,
 						'active' : true
@@ -85,7 +86,7 @@
 					{
 						'title' : 'Base Frequency',
 						'slug' : 'base_freq',
-						'value' : 18,
+						'value' : 12,
 						'min' : 2,
 						'max' : 36,
 						'active' : true
@@ -109,9 +110,9 @@
 					{
 						'title' : 'Water Level',
 						'slug' : 'water_level',
-						'value' : 25,
-						'min' : 1,
-						'max' : 200,
+						'value' : 50,
+						'min' : 0,
+						'max' : 100,
 						'active' : true
 					},
 					{
