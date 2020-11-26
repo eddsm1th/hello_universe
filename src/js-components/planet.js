@@ -34,16 +34,8 @@ const 	use_colours = true,
 				'colour' : 'forestgreen'
 			},
 			{
-				'threshhold' : 20,
-				'colour' : 'khaki'
-			},
-			{
-				'threshhold' : 10,
-				'colour' : 'blue'
-			},
-			{
 				'threshhold' : 0,
-				'colour' : 'navy'
+				'colour' : 'khaki'
 			},
 		],
 		rotation_values = [
@@ -102,26 +94,39 @@ const plot_points = ( grid_data, final_freq_count, layer_options, rotation_value
 				'ii' : grid_data[ i - 1 ][ j + 1 ],
 			};
 
-			geometry.faces.push(
-				new THREE.Face3( points.oo.index, points.oi.index, points.ii.index ),
-				new THREE.Face3( points.oo.index, points.io.index, points.ii.index ),
-			);
+			geometry.faces.push( new THREE.Face3( points.io.index, points.oo.index, points.ii.index ) );
+			geometry.faces[ geometry.faces.length - 1 ].color = new THREE.Color( get_colour_by_height( points.oo, points.oi, points.ii, layer_options ) );
 
-			geometry.faces[ geometry.faces.length - 2 ].color = new THREE.Color( get_colour_by_height( points.oo, points.oi, points.ii, layer_options ) );
-			geometry.faces[ geometry.faces.length - 1 ].color = new THREE.Color( get_colour_by_height( points.oo, points.io, points.ii, layer_options ) );
+			geometry.faces.push( new THREE.Face3( points.oo.index, points.oi.index, points.ii.index ) );
+			geometry.faces[ geometry.faces.length - 1 ].color = new THREE.Color( get_colour_by_height( points.oo, points.oi, points.ii, layer_options ) );
+			
 		}
 	}
 
-	const material = new THREE.MeshBasicMaterial( use_colours ? {
+	const material = use_colours ? new THREE.MeshLambertMaterial( {
 		vertexColors: THREE.FaceColors,
-		side: THREE.DoubleSide
-	} : {
+		side: THREE.DoubleSide,
+		flatShading: false
+	} ) : new THREE.MeshBasicMaterial( {
 		color: colours[ rotation_values_index ],
 		wireframe: true,
-	} ),
-	terrain = new THREE.Mesh( geometry, material );
+	} );
+
+	geometry.computeFaceNormals();
+	geometry.computeVertexNormals();
+
+	const terrain = new THREE.Mesh( geometry, material );
 
 	scene.add( terrain );
+
+	const s_geometry = new THREE.SphereGeometry( ( layer_options.radius - ( layer_options.base_amp / 2 ) ) + layer_options.water_level, final_freq_count / 2, final_freq_count / 2 );
+	const s_material = new THREE.MeshLambertMaterial( {
+		color: 'blue',
+		opacity: 0.25,
+		transparent: true
+	} );
+	const sphere = new THREE.Mesh( s_geometry, s_material );
+	scene.add( sphere );
 
 	apply_rotation_to_side( terrain, rotation_values_index );
 }
@@ -188,7 +193,12 @@ export function create_planet ( layer_options ) {
 
 		apply_drag_controls( scene );
 
-		const directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+		const ambient = new THREE.AmbientLight( 0xffffff, .3 );
+		ambient.position.z = 1000;
+		scene.add( ambient );
+
+		const directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
+		directionalLight.position.z = 1000;
 		scene.add( directionalLight );
 
 		function animate() {

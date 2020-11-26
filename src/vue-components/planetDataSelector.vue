@@ -111,8 +111,8 @@
 						'slug' : 'water_level',
 						'value' : 25,
 						'min' : 1,
-						'max' : 100,
-						'active' : false
+						'max' : 200,
+						'active' : true
 					},
 					{
 						'title' : 'Planet Radius',
