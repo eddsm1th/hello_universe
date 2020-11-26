@@ -52,7 +52,7 @@ const 	use_colours = true,
 // Translate data from cube to sphere
 const map_data_onto_sphere = ( grid_data, layer_options, final_freq_count ) => {
 	const 	quadrant_cutoff_index = Math.ceil( final_freq_count / 2 ),
-			panel_quadrant_one = [...grid_data].slice( 0, quadrant_cutoff_index ).map( ( item ) => [...item].slice( 0, quadrant_cutoff_index ) );
+			panel_quadrant_one = [...grid_data[ 0 ][ 'data' ] ].slice( 0, quadrant_cutoff_index ).map( ( item ) => [...item].slice( 0, quadrant_cutoff_index ) );
 
 	panel_quadrant_one.forEach( ( quadrant_row, index ) => {
 		quadrant_row.forEach( ( quadrant_row_index, sub_index ) => {
@@ -61,21 +61,25 @@ const map_data_onto_sphere = ( grid_data, layer_options, final_freq_count ) => {
 					mirrored_column_index = final_freq_count - 1 - sub_index,
 					mirrored_row_index = final_freq_count - 1 - index;
 
-			[
-				grid_data[ index ][ sub_index ],
-				grid_data[ index ][ mirrored_column_index ],
-				grid_data[ mirrored_row_index ][ sub_index ],
-				grid_data[ mirrored_row_index ][ mirrored_column_index ],
-			].forEach( inst => {
-				if ( !inst.c2s_mapped ) {
-					const coords_multiplier = layer_options.radius / ( xzy_length_to_center - inst.amp_value );
+			grid_data.forEach( grid_data_inst => {
+				const data = grid_data_inst[ 'data' ];
 
-					inst.y = inst.y * coords_multiplier;
-					inst.x = inst.x * coords_multiplier; 
-					inst.z = inst.z * coords_multiplier; 
+				[
+					data[ index ][ sub_index ],
+					data[ index ][ mirrored_column_index ],
+					data[ mirrored_row_index ][ sub_index ],
+					data[ mirrored_row_index ][ mirrored_column_index ],
+				].forEach( inst => {
+					if ( !inst.c2s_mapped ) {
+						const coords_multiplier = layer_options.radius / ( xzy_length_to_center - inst.amp_value );
 
-					inst[ 'c2s_mapped' ] = true;
-				}
+						inst.y = inst.y * coords_multiplier;
+						inst.x = inst.x * coords_multiplier; 
+						inst.z = inst.z * coords_multiplier; 
+
+						inst[ 'c2s_mapped' ] = true;
+					}
+				} );
 			} );
 		} );
 	} );
@@ -112,8 +116,7 @@ const plot_points = ( grid_data, final_freq_count, layer_options, rotation_value
 			geometry.faces[ geometry.faces.length - 1 ].color = new THREE.Color( get_colour_by_height( points.oo, points.oi, points.ii, layer_options ) );
 
 			geometry.faces.push( new THREE.Face3( points.oo.index, points.oi.index, points.ii.index ) );
-			geometry.faces[ geometry.faces.length - 1 ].color = new THREE.Color( get_colour_by_height( points.oo, points.oi, points.ii, layer_options ) );
-			
+			geometry.faces[ geometry.faces.length - 1 ].color = new THREE.Color( get_colour_by_height( points.oo, points.oi, points.ii, layer_options ) );	
 		}
 	}
 
@@ -139,6 +142,7 @@ const plot_points = ( grid_data, final_freq_count, layer_options, rotation_value
 		opacity: 0.25,
 		transparent: true
 	} );
+	
 	const sphere = new THREE.Mesh( s_geometry, s_material );
 	scene.add( sphere );
 
@@ -193,7 +197,8 @@ export function create_planet ( layer_options ) {
 				scene = new THREE.Scene(),
 				camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, .1, 1000 ),
 				renderer = new THREE.WebGLRenderer(),
-				grid_data = generate_point_data( layer_options, final_freq_count, sides_to_render );
+				grid_data = generate_point_data( layer_options, final_freq_count, sides_to_render ),
+				sphere_mapped_data = map_data_onto_sphere( grid_data, layer_options, final_freq_count );
 		
 		renderer.setSize( window.innerWidth, window.innerHeight );
 		document.body.appendChild( renderer.domElement );
@@ -201,7 +206,7 @@ export function create_planet ( layer_options ) {
 		camera.position.z = 1000; // make this more relative to planet size and window
 
 		for ( let i = 0; i < sides_to_render; i ++ ) {
-			map_data_onto_sphere( grid_data[ i ][ 'data' ], layer_options, final_freq_count );
+			// map_data_onto_sphere( grid_data[ i ][ 'data' ], layer_options, final_freq_count );
 			plot_points( grid_data[ i ][ 'data' ], final_freq_count, layer_options, i, scene )
 		}
 
