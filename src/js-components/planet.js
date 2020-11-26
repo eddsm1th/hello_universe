@@ -2,8 +2,9 @@
 /*
 	TODO:
 		- custom planet generation controls
-			- (Re)Generate // (Re)Colour // Water options
+			- (Re)Generate // (Re)Colour
 			- planet specific colours
+			- move water controls into their own panel
 
 		- colour blending
 		- better dragging controls
