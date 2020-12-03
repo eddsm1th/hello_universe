@@ -137,10 +137,11 @@ const plot_points = ( grid_data, final_freq_count, layer_options, rotation_value
 	scene.add( terrain );
 
 	const s_geometry = new THREE.SphereGeometry( ( layer_options.radius - ( layer_options.base_amp / 2 ) ) + ( layer_options.base_amp * ( layer_options.water_level / 100 ) ), final_freq_count / 2, final_freq_count / 2 );
-	const s_material = new THREE.MeshLambertMaterial( {
+	const s_material = new THREE.MeshPhongMaterial( {
 		color: 'blue',
-		opacity: 0.25,
-		transparent: true
+		opacity: .75,
+		transparent: true,
+		reflectivity: 1,
 	} );
 	
 	const sphere = new THREE.Mesh( s_geometry, s_material );
@@ -206,13 +207,12 @@ export function create_planet ( layer_options ) {
 		camera.position.z = 1000; // make this more relative to planet size and window
 
 		for ( let i = 0; i < sides_to_render; i ++ ) {
-			// map_data_onto_sphere( grid_data[ i ][ 'data' ], layer_options, final_freq_count );
 			plot_points( grid_data[ i ][ 'data' ], final_freq_count, layer_options, i, scene )
 		}
 
 		apply_drag_controls( scene );
 
-		const ambient = new THREE.AmbientLight( 0xffffff, .3 );
+		const ambient = new THREE.AmbientLight( 0xffffff, .1 );
 		ambient.position.z = 1000;
 		scene.add( ambient );
 
