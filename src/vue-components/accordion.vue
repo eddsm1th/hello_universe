@@ -66,6 +66,7 @@
 		border: 1px solid #fff;
 		color: #fff;
 		background-color: rgba( 0, 0, 0, .5 );
+		position: relative;
 
 		&:not(:last-child) {
 			margin-bottom: 20px;

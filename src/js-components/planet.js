@@ -10,6 +10,28 @@
 		- better dragging controls
 
 		- gravity???
+
+	PHASE_002:
+		// better interfacearound it
+			// solar system -> planets -> moons
+			// names
+		// octagonal planet base
+		// according planet generator
+		// seperate above and below water level controls
+		// colours
+			// base colour
+			// flat colour
+			// height overrides
+			// water colour
+		// gravity
+		// moons
+		// atmosphere
+
+		?_// temperature based on distance to center ?_//
+			// lightens::darkens colours
+
+		// looking to the sky to see other peoples solar systems
+			// your grid is a little grid inside a huge grid
 */
 
 import { generate_point_data } from './planet_panel_mesh_generation.js';
