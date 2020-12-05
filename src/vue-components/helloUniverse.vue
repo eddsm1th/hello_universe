@@ -137,7 +137,6 @@
 
 <style lang="scss">
 	.hello-universe {
-		margin-bottom: 20px;
 		transition: .3s height ease;
 		overflow: hidden;
 		color: #ffffff;

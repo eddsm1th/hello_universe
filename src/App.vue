@@ -17,7 +17,7 @@
             }"
         >
             <div
-                class="state_container__inner"
+                class="state-container__inner"
                 ref="state_content"
             >
                 <component :is="current_state.name"/>
@@ -60,7 +60,7 @@
                 states: [
                     {
                         'id' : 1,
-                        'name' : 'mainMenu',
+                        'name' : 'solorSystemSelector',
                         'active' : true
                     }
                 ],
@@ -92,7 +92,7 @@
 
         mounted () {
             setTimeout( () => this.instantiated = true, 300 );
-            setTimeout( () => this.loaded = true, 0 ); 
+            setTimeout( () => this.loaded = true, 500 ); 
         },
 
         methods: {
@@ -144,7 +144,6 @@
         padding: 20px;
         margin: 20px;
         position: relative;
-        border-left: 1px solid #ffffff;
         width: 80%;
         max-width: 400px;
         display: flex;
@@ -166,7 +165,7 @@
             height: calc( 100% + 16px );
             top: -8px;
             left: 0;
-            background: linear-gradient(90deg, rgba(255, 255, 255, .15), rgba(255, 255, 255, .02));
+            background: linear-gradient(90deg, rgba(255, 255, 255, .25), rgba(255, 255, 255, 0));
             filter: blur(8px);
             pointer-events: none;
         }
@@ -175,5 +174,9 @@
     .state-container {
         transition: .3s height ease;
         overflow: hidden;
+
+        &__inner {
+            padding-top: 20px;
+        }
     }
 </style>
