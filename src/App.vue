@@ -174,7 +174,7 @@
             height: calc( 100% + 16px );
             top: -8px;
             left: 0;
-            background: linear-gradient(90deg, rgba(255, 255, 255, .25), rgba(255, 255, 255, 0));
+            background: linear-gradient(90deg, rgba(255, 255, 255, .15), rgba(255, 255, 255, 0));
             filter: blur(8px);
             pointer-events: none;
         }
