@@ -13,14 +13,17 @@
             v-if="loaded"
             class="state-container"
             :style="{
-                height : state_height + 'px',
+                height : ( states_transitioning ?  0 : ( ( state_height + 1 ) + 'px' ) ),
             }"
         >
             <div
                 class="state-container__inner"
                 ref="state_content"
             >
-                <component :is="current_state.name"/>
+                <component
+                    :is="current_state.name"
+                    :solar_system_data="selected_solar_system"
+                />
             </div>
         </section>
 
@@ -36,7 +39,8 @@
 <script>
     import accordion from './vue-components/accordion.vue';
     import helloUniverse from './vue-components/helloUniverse.vue';
-    import mainMenu from './vue-components/mainMenu.vue';
+    import solarSystemSelector from './vue-components/solarSystemSelector.vue';
+    import solarSystemEditor from './vue-components/solarSystemEditor.vue';
 
     export default {
         name: 'app',
@@ -44,7 +48,8 @@
         components: {
             accordion,
             helloUniverse,
-            mainMenu
+            solarSystemSelector,
+            solarSystemEditor,
         },
 
         data () {
@@ -57,12 +62,17 @@
                 states_transitioning: false,
                 state_height: 0,
 
+                selected_solar_system: null,
+
                 states: [
                     {
-                        'id' : 1,
-                        'name' : 'solorSystemSelector',
+                        'name' : 'solarSystemSelector',
                         'active' : true
-                    }
+                    },
+                    {
+                        'name' : 'solarSystemEditor',
+                        'active' : true
+                    },
                 ],
 
                 accordions: [
@@ -101,7 +111,7 @@
 
                 setTimeout( () => {
                     this.current_state.active = false;
-                    this.states.find( inst => inst.id == state_index ).active = true;
+                    this.states[ state_index ].active = true;
 
                     this.states_transitioning = false;
                     this.state_height = this.$refs.state_content.offsetHeight;
@@ -109,7 +119,6 @@
             },
 
             set_initial_state () {
-                console.log('hello')
                 this.states_ready = true;
                 this.state_height = this.$refs.state_content.offsetHeight;
             }
@@ -145,7 +154,7 @@
         margin: 20px;
         position: relative;
         width: 80%;
-        max-width: 400px;
+        // max-width: 400px;
         display: flex;
         flex-direction: column;
         transform: rotateY(10deg);
