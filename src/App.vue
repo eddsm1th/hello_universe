@@ -1,44 +1,119 @@
 <template>
-    <main class="options">
-        <accordion
+    <main
+        class="main"
+        :class="{
+            'instantiated' : instantiated
+        }"
+    >
+        <helloUniverse
+            v-if="loaded"
+        />
+
+        <section
+            v-if="loaded"
+            class="state-container"
+            :style="{
+                height : state_height + 'px',
+            }"
+        >
+            <div
+                class="state_container__inner"
+                ref="state_content"
+            >
+                <component :is="current_state.name"/>
+            </div>
+        </section>
+
+       <!--  <accordion
             v-for="accordion, index in accordions"
             :key="index"
             :content="accordion.content"
             :child_component="accordion.child_component"
-        ></accordion>
+        ></accordion> -->
     </main>
 </template>
 
 <script>
-    import accordion from './vue-components/Accordion.vue';
+    import accordion from './vue-components/accordion.vue';
+    import helloUniverse from './vue-components/helloUniverse.vue';
+    import mainMenu from './vue-components/mainMenu.vue';
 
     export default {
         name: 'app',
 
         components: {
             accordion,
+            helloUniverse,
+            mainMenu
         },
 
         data () {
             return {
+                instantiated: false,
+                loaded: false,
+                loading: false,
+
+                states_ready: false,
+                states_transitioning: false,
+                state_height: 0,
+
+                states: [
+                    {
+                        'id' : 1,
+                        'name' : 'mainMenu',
+                        'active' : true
+                    }
+                ],
+
                 accordions: [
                     {
                         'content' : {
-                            'title' : 'Planet Data',
-                            'cta_content' : 'Generate Planet'
+                            'title' : 'Planet_Data',
+                            'cta_content' : 'Generate_Planet'
                         },
                         'child_component' : 'planetDataSelector'
                     },
                     {
                         'content' : {
-                            'title' : 'Colour Data',
-                            'cta_content' : 'Generate Colours'
+                            'title' : 'Colour_Data',
+                            'cta_content' : 'Generate_Colours'
                         },
                         'child_component' : 'colourDataSelector'
                     }
                 ]
             }
         },
+
+        computed: {
+            current_state () {
+                return this.states.find( inst => inst.active );
+            }
+        },
+
+        mounted () {
+            setTimeout( () => this.instantiated = true, 300 );
+            setTimeout( () => this.loaded = true, 0 ); 
+        },
+
+        methods: {
+            load_state ( state_index ) {
+                this.states_transitioning = true;
+
+                setTimeout( () => {
+                    this.current_state.active = false;
+                    this.states.find( inst => inst.id == state_index ).active = true;
+
+                    this.states_transitioning = false;
+                    this.state_height = this.$refs.state_content.offsetHeight;
+                }, 300 );      
+            },
+
+            set_initial_state () {
+                console.log('hello')
+                this.states_ready = true;
+                this.state_height = this.$refs.state_content.offsetHeight;
+            }
+        }
     };
 </script>
 
@@ -51,16 +126,54 @@
         font-weight: 100;
         font-size: 1em;
         text-transform: uppercase;
-        letter-spacing: .5em;
+        letter-spacing: .4em;
     }
 
     body, html {
         background-color: #000;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
     }
 
-    .options {
-        position: absolute;
-        top: 20px;
-        left: 20px;
+    body {
+        perspective: 500px;
+    }
+
+    .main {
+        padding: 20px;
+        margin: 20px;
+        position: relative;
+        border-left: 1px solid #ffffff;
+        width: 80%;
+        max-width: 400px;
+        display: flex;
+        flex-direction: column;
+        transform: rotateY(10deg);
+        transform-origin: 0 50%;
+        transition: .3s width ease, .3s padding-top ease, .3s padding-bottom ease;
+
+        &:not(.instantiated) {
+            width: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        &:after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: calc( 100% + 16px );
+            top: -8px;
+            left: 0;
+            background: linear-gradient(90deg, rgba(255, 255, 255, .15), rgba(255, 255, 255, .02));
+            filter: blur(8px);
+            pointer-events: none;
+        }
+    }
+
+    .state-container {
+        transition: .3s height ease;
+        overflow: hidden;
     }
 </style>

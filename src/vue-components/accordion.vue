@@ -65,8 +65,8 @@
 	.accordion {
 		border: 1px solid #fff;
 		color: #fff;
-		background-color: rgba( 0, 0, 0, .5 );
 		position: relative;
+		flex-shrink: 0;
 
 		&:not(:last-child) {
 			margin-bottom: 20px;

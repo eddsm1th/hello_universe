@@ -60,7 +60,7 @@
 				grid_data: null,
 				data_options: [
 					{
-						'title' : 'Base Amplitude',
+						'title' : 'Base_Amplitude',
 						'slug' : 'base_amp',
 						'value' : 60,
 						'min' : 0,
@@ -68,7 +68,7 @@
 						'active' : true
 					},
 					{
-						'title' : 'Amplitude Layer Division',
+						'title' : 'Amplitude_Layer_Division',
 						'slug' : 'amp_diff',
 						'value' : 2,
 						'min' : 1,
@@ -76,7 +76,7 @@
 						'active' : true
 					},
 					{
-						'title' : 'Amplitude Bias',
+						'title' : 'Amplitude_Bias',
 						'slug' : 'amp_bias',
 						'value' : 0,
 						'min' : -100,
@@ -84,7 +84,7 @@
 						'active' : true
 					},
 					{
-						'title' : 'Base Frequency',
+						'title' : 'Base_Frequency',
 						'slug' : 'base_freq',
 						'value' : 12,
 						'min' : 2,
@@ -92,7 +92,7 @@
 						'active' : true
 					},
 					{
-						'title' : 'Frequency Multiplier',
+						'title' : 'Frequency_Multiplier',
 						'slug' : 'freq_diff',
 						'value' : 2,
 						'min' : 2,
@@ -100,7 +100,7 @@
 						'active' : false
 					},
 					{
-						'title' : 'Base Layers',
+						'title' : 'Base_Layers',
 						'slug' : 'base_layers',
 						'value' : 4,
 						'min' : 1,
@@ -108,7 +108,7 @@
 						'active' : true
 					},
 					{
-						'title' : 'Water Level',
+						'title' : 'Water_Level',
 						'slug' : 'water_level',
 						'value' : 50,
 						'min' : 0,
@@ -116,7 +116,7 @@
 						'active' : true
 					},
 					{
-						'title' : 'Planet Radius',
+						'title' : 'Planet_Radius',
 						'slug' : 'radius',
 						'value' : 600,
 						'min' : 100,
