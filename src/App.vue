@@ -23,6 +23,7 @@
                 <component
                     :is="current_state.name"
                     :solar_system_data="selected_solar_system"
+                    :solar_systems="solar_systems"
                 />
             </div>
         </section>
@@ -75,6 +76,12 @@
                     },
                 ],
 
+                solar_systems: [
+                    this.make_solar_system(),
+                    this.make_solar_system(),
+                    this.make_solar_system(),
+                ],
+
                 accordions: [
                     {
                         'content' : {
@@ -121,6 +128,15 @@
             set_initial_state () {
                 this.states_ready = true;
                 this.state_height = this.$refs.state_content.offsetHeight;
+            },
+
+            make_solar_system ( data = {} ) {
+                return {
+                    'name' : data.name || 'My First Solar System',
+                    'planets' : data.planets || [],
+                    'blackhole' : data.blackhole || false,
+                    'doom' : data.doom || false,
+                }
             }
         }
     };

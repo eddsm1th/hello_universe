@@ -32,6 +32,7 @@
 
 				<div 
 					class="selector__shadow"
+					@click.stop=""
 					:class="{
 						'blackhole' : solar_system.blackhole
 					}"
@@ -76,14 +77,15 @@
 	export default {
 		name: 'solarSystemSelector',
 
+		props: {
+			'solar_systems' : {
+				type: Array,
+			}
+		},
+
 		data () {
 			return {
-				solar_systems: [
-					this.make_solar_system(),
-					this.make_solar_system(),
-					this.make_solar_system(),
-				],
-				theme_music: ['Thanks for all the fish!','404','¯\\_(ツ)_/¯', 'CYA2TMR','EXTRA LIFE!','FATALITY','Thanks for staying!'],
+				theme_music: ['Thanks for all the fish!','404','¯\\_(ツ)_/¯', 'CYA2TMR','EXTRA LIFE!','FATALITY','Thanks for staying!','...oops','EXECUTE ORDER 66','*SNAP*'],
 			}
 		},
 
@@ -107,19 +109,8 @@
 			},
 
 			create_solar_system () {
-				this.solar_systems.unshift( this.make_solar_system() );
+				this.solar_systems.unshift( this.$parent.make_solar_system() );
 			},
-
-			make_solar_system ( data = {} ) {
-				return {
-					'name' : data.name || 'My First Solar System',
-					'planets' : data.planets || [
-						{}
-					],
-					'blackhole' : data.blackhole || false,
-					'doom' : data.doom || false,
-				}
-			}
 		}
 	}
 </script>
