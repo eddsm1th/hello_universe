@@ -1,6 +1,5 @@
-# Waves
-
-> A Vue.js project
+# Hello_Universe
+> Faciam te in astra
 
 ## Build Setup
 
