@@ -24,6 +24,7 @@
                     :is="current_state.name"
                     :solar_system_data="selected_solar_system"
                     :solar_systems="solar_systems"
+                    :celestial_body="selected_celestial_body"
                 />
             </div>
         </section>
@@ -63,8 +64,6 @@
                 states_transitioning: false,
                 state_height: 0,
 
-                selected_solar_system: null,
-
                 states: [
                     {
                         'name' : 'solarSystemSelector',
@@ -72,15 +71,19 @@
                     },
                     {
                         'name' : 'solarSystemEditor',
-                        'active' : true
+                        'active' : false
+                    },
+                    {
+                        'name' : 'planetEditor',
+                        'active' : false
                     },
                 ],
 
-                solar_systems: [
-                    this.make_solar_system(),
-                    this.make_solar_system(),
-                    this.make_solar_system(),
-                ],
+                solar_systems: [],
+                selected_solar_system: {},
+                selected_celestial_body: {},
+
+                theme_music: ['Thanks for all the fish!','404','¯\\_(ツ)_/¯', 'CYA2TMR','EXTRA LIFE!','FATALITY','Thanks for staying!','...oops','EXECUTE ORDER 66','*SNAP*'],
 
                 accordions: [
                     {
@@ -108,6 +111,12 @@
         },
 
         mounted () {
+            this.solar_systems = [
+                this.make_solar_system(),
+                this.make_solar_system(),
+                this.make_solar_system(),
+            ];
+
             setTimeout( () => this.instantiated = true, 300 );
             setTimeout( () => this.loaded = true, 500 ); 
         },
@@ -133,9 +142,19 @@
             make_solar_system ( data = {} ) {
                 return {
                     'name' : data.name || 'My First Solar System',
-                    'planets' : data.planets || [],
+                    'celestial_bodies' : data.planets || [ this.make_celestial_body() ],
                     'blackhole' : data.blackhole || false,
                     'doom' : data.doom || false,
+                    'doom_music' : this.theme_music[ Math.floor( Math.random() * this.theme_music.length ) ],
+                }
+            },
+
+            make_celestial_body (  ) {
+                return {
+                    'name' : 'My First Celestial Body',
+                    'blackhole' : false,
+                    'doom' : false,
+                    'doom_music' : this.theme_music[ Math.floor( Math.random() * this.theme_music.length ) ],
                 }
             }
         }

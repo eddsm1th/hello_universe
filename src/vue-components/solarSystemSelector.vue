@@ -23,7 +23,7 @@
 						@click.stop=""
 						v-model="solar_system.name"
 					></input>
-					<small>00{{ solar_system.planets.length }}_planets</small>
+					<small>00{{ solar_system.celestial_bodies.length }}_celestial_bodies</small>
 				</div>
 				<i
 					class="selector__delete"
@@ -56,14 +56,14 @@
 					}"
 					v-if="solar_system.doom"
 				>
-					<span>{{ get_theme_song() }}</span>
+					<span>{{ solar_system.doom_music }}</span>
 				</div>
 			</li>
 		</ul>
 
 		<ul class="selector__options">
 			<li class="selector__option">
-				<button @click="create_solar_system()">Create_New</button>
+				<button @click="create_solar_system()">New_solar_system</button>
 			</li>
 			<li class="selector__option">
 				<button>Browse_(WIP)</button>
@@ -85,7 +85,6 @@
 
 		data () {
 			return {
-				theme_music: ['Thanks for all the fish!','404','¯\\_(ツ)_/¯', 'CYA2TMR','EXTRA LIFE!','FATALITY','Thanks for staying!','...oops','EXECUTE ORDER 66','*SNAP*'],
 			}
 		},
 
@@ -104,10 +103,6 @@
 				}, 1000 );
 			},
 
-			get_theme_song () {
-				return this.theme_music[ Math.floor( Math.random() * this.theme_music.length ) ];
-			},
-
 			create_solar_system () {
 				this.solar_systems.unshift( this.$parent.make_solar_system() );
 			},
@@ -123,8 +118,14 @@
 
 		&__title {
 			display: flex;
+			flex-wrap: wrap;
 			justify-content: space-between;
-			margin-bottom: 20px
+			margin-bottom: 20px;
+
+			small {
+				width: 100%;
+				font-size: 10px;
+			}
 		}
 
 		&__list, &__options {
@@ -181,7 +182,8 @@
 
 		&__option {
 			padding-left: 12px;
-			width: 50%;
+			min-width: 50%;
+			font-size: 12px;
 			
 			button {
 				padding: 12px 12px;
