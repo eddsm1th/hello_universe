@@ -13,7 +13,7 @@
             v-if="loaded"
             class="state-container"
             :style="{
-                height : ( states_transitioning ?  0 : ( ( state_height + 1 ) + 'px' ) ),
+                height : state_height,
             }"
         >
             <div
@@ -74,7 +74,7 @@
                         'active' : false
                     },
                     {
-                        'name' : 'planetEditor',
+                        'name' : 'celestialBodyEditor',
                         'active' : false
                     },
                 ],
@@ -123,39 +123,42 @@
 
         methods: {
             load_state ( state_index ) {
-                this.states_transitioning = true;
+                [ this.set_state_height(), this.set_state_height( '0px', 1 ) ];
 
                 setTimeout( () => {
                     this.current_state.active = false;
-                    this.states[ state_index ].active = true;
 
-                    this.states_transitioning = false;
-                    this.state_height = this.$refs.state_content.offsetHeight;
-                }, 300 );      
+                    [ this.states[ state_index ].active = true, this.set_state_height(), this.set_state_height( 'auto', 300 ) ];
+                }, 300 );
             },
 
             set_initial_state () {
                 this.states_ready = true;
-                this.state_height = this.$refs.state_content.offsetHeight;
+                
+                [ this.set_state_height(), this.set_state_height( 'auto', 300 ) ]
+            },
+
+            set_state_height ( height = null, delay = 0 ) {
+                setTimeout( () => this.state_height = ( height || this.$refs.state_content.offsetHeight + 1 + 'px' ), delay )
             },
 
             make_solar_system ( data = {} ) {
                 return {
                     'name' : data.name || 'My First Solar System',
-                    'celestial_bodies' : data.planets || [ this.make_celestial_body() ],
+                    'celestial_bodies' : data.celestial_bodies || [ this.make_celestial_body() ],
                     'blackhole' : data.blackhole || false,
                     'doom' : data.doom || false,
                     'doom_music' : this.theme_music[ Math.floor( Math.random() * this.theme_music.length ) ],
-                }
+                };
             },
 
-            make_celestial_body (  ) {
+            make_celestial_body ( data = {} ) {
                 return {
-                    'name' : 'My First Celestial Body',
-                    'blackhole' : false,
-                    'doom' : false,
+                    'name' : data.name || 'My First Celestial Body',
+                    'blackhole' : data.blackhole || false,
+                    'doom' : data.doom || false,
                     'doom_music' : this.theme_music[ Math.floor( Math.random() * this.theme_music.length ) ],
-                }
+                };
             }
         }
     };
