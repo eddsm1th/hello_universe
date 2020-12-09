@@ -1,6 +1,6 @@
 <template>
 	<section
-		class="hello-universe"
+		class="hello-universe clipped"
 		:style="{
 			height : correct_height,
 		}"

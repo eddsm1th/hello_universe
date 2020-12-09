@@ -83,7 +83,7 @@
                 selected_solar_system: {},
                 selected_celestial_body: {},
 
-                theme_music: ['Thanks for all the fish!','404','¯\\_(ツ)_/¯', 'CYA2TMR','EXTRA LIFE!','FATALITY','Thanks for staying!','...oops','EXECUTE ORDER 66','*SNAP*'],
+                theme_music: ['Thanks for all the fish!','404','¯\\_(ツ)_/¯', 'CYA2TMR','EXTRA LIFE!','FATALITY','Thanks for staying!','...oops','EXECUTE ORDER 66','*SNAP*','Pulling an Alderaan...'],
 
                 accordions: [
                     {
@@ -123,7 +123,7 @@
 
         methods: {
             load_state ( state_index ) {
-                [ this.set_state_height(), this.set_state_height( '0px', 1 ) ];
+                [ this.set_state_height(), this.set_state_height( '0px', 40 ) ];
 
                 setTimeout( () => {
                     this.current_state.active = false;
@@ -185,6 +185,31 @@
 
     body {
         perspective: 500px;
+    }
+
+    .clipped {
+        $clip_dimension: 20px;
+
+        clip-path: polygon(0% 0%, 100% 0%, 100% calc( 100% - #{ $clip_dimension } ), calc( 100% - #{ $clip_dimension } ) 100%, 0% 100%);
+        position: relative;
+
+        &:after {
+            content: "";
+            position: absolute;
+            right: #{ $clip_dimension + 1 };
+            bottom: 0;
+            width: calc( #{ $clip_dimension } * 1.414 );
+            height: 1px;
+            background-color: #fff;
+            transform: rotate( 135deg );
+            transform-origin: 100% 100%;
+        }
+
+        &-red {
+            &:after {
+                background-color: #f00;
+            }
+        }
     }
 
     .main {

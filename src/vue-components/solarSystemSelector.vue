@@ -1,5 +1,5 @@
 <template>
-	<section class="selector">
+	<section class="selector clipped">
 		<h3 class="selector__title">
 			<span>U://Solar_Systems&nbsp;</span><span>//&nbsp;{{ solar_systems.length }}&nbsp;/&nbsp;9</span>
 		</h3>
@@ -31,14 +31,14 @@
 				></i>
 
 				<div 
-					class="selector__shadow"
+					class="selector__shadow clipped clipped-red"
 					@click.stop=""
 					:class="{
 						'blackhole' : solar_system.blackhole
 					}"
-					v-if="solar_system.blackhole && !solar_system.doom"
+					v-if="solar_system.blackhole"
 				>
-					<span>Are you sure?
+					<span v-if="!solar_system.doom">Are you sure?
 						<i
 							class="selector__shadow-button"
 							@click.stop="solar_system.blackhole = false;"
@@ -48,24 +48,16 @@
 							@click.stop="destroy_solar_system( solar_system )"
 						>yes</i>
 					</span>
-				</div>
-				<div 
-					class="selector__shadow"
-					:class="{
-						'blackhole' : solar_system.blackhole
-					}"
-					v-if="solar_system.doom"
-				>
-					<span>{{ solar_system.doom_music }}</span>
+					<span v-else>{{ solar_system.doom_music }}</span>
 				</div>
 			</li>
 		</ul>
 
 		<ul class="selector__options">
-			<li class="selector__option">
+			<li class="selector__option clipped">
 				<button @click="create_solar_system()">New_solar_system</button>
 			</li>
-			<li class="selector__option">
+			<li class="selector__option clipped">
 				<button>Browse_(WIP)</button>
 			</li>
 		</ul>

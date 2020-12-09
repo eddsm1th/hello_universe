@@ -1,5 +1,5 @@
 <template>
-	<section class="selector">
+	<section class="selector clipped">
 		<h3 class="selector__title">
 			<span>U://{{ solar_system_data.name }}</span>
 		</h3>
@@ -30,14 +30,14 @@
 				></i>
 
 				<div 
-					class="selector__shadow"
+					class="selector__shadow clipped clipped-red"
 					@click.stop=""
 					:class="{
 						'blackhole' : celestial_body.blackhole
 					}"
-					v-if="celestial_body.blackhole && !celestial_body.doom"
+					v-if="celestial_body.blackhole"
 				>
-					<span>Are you sure?
+					<span v-if="!celestial_body.doom">Are you sure?
 						<i
 							class="selector__shadow-button"
 							@click.stop="celestial_body.blackhole = false;"
@@ -47,21 +47,13 @@
 							@click.stop="destroy_celestial_body( celestial_body )"
 						>yes</i>
 					</span>
-				</div>
-				<div 
-					class="selector__shadow"
-					:class="{
-						'blackhole' : celestial_body.blackhole
-					}"
-					v-if="celestial_body.doom"
-				>
-					<span>{{ celestial_body.doom_music }}</span>
+					<span v-else>{{ celestial_body.doom_music }}</span>
 				</div>
 			</li>
 		</ul>
 
 		<ul class="selector__options">
-			<li class="selector__option">
+			<li class="selector__option clipped">
 				<button @click="create_celestial_body()">New_celestial_body</button>
 			</li>
 		</ul>
