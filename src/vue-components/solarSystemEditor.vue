@@ -23,6 +23,7 @@
 						@click.stop=""
 						v-model="celestial_body.name"
 					></input>
+					<small>R600//BF12//L4</small>
 				</div>
 				<i
 					class="selector__delete"

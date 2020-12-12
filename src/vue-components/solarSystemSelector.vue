@@ -1,5 +1,5 @@
 <template>
-	<section class="selector clipped">
+	<section class="selector">
 		<h3 class="selector__title">
 			<span>U://Solar_Systems&nbsp;</span><span>//&nbsp;{{ solar_systems.length }}&nbsp;/&nbsp;9</span>
 		</h3>
@@ -20,7 +20,7 @@
 				<div>
 					<input
 						class="selector__item-title"
-						@click.stop=""
+						@click.stop
 						v-model="solar_system.name"
 					></input>
 					<small>00{{ solar_system.celestial_bodies.length }}_celestial_bodies</small>
@@ -31,8 +31,8 @@
 				></i>
 
 				<div 
-					class="selector__shadow clipped clipped-red"
-					@click.stop=""
+					class="selector__shadow"
+					@click.stop
 					:class="{
 						'blackhole' : solar_system.blackhole
 					}"
@@ -103,7 +103,10 @@
 </script>
 
 <style lang="scss">
+	@import "../scss-components/_mixins.scss";
+
 	.selector {
+		@include clipped;
 		padding: 20px;
 		border: 1px solid #fff;
 		color: #fff;
@@ -126,13 +129,13 @@
 
 		&__item {
 			padding: 8px 60px 8px 12px;
-			border: 1px solid #fff;
+			border: 1px solid transparent;
 			cursor: pointer;
-			transition: .3s background-color ease, .2s border ease;
 			position: relative;
 
-			&:hover {
-				background-color: rgba( 255, 255, 255, .2 );
+			&:not(.blackhole):hover {
+				@include clipped;
+				border: 1px solid #fff;
 			}
 
 			&:not(:last-child) {
@@ -233,6 +236,7 @@
 		}
 
 		&__shadow {
+			@include clipped ( #f00 );
 			position: absolute;
 			top: 0;
 			left: 0;

@@ -187,31 +187,6 @@
         perspective: 500px;
     }
 
-    .clipped {
-        $clip_dimension: 20px;
-
-        clip-path: polygon(0% 0%, 100% 0%, 100% calc( 100% - #{ $clip_dimension } ), calc( 100% - #{ $clip_dimension } ) 100%, 0% 100%);
-        position: relative;
-
-        &:after {
-            content: "";
-            position: absolute;
-            right: #{ $clip_dimension + 1 };
-            bottom: 0;
-            width: calc( #{ $clip_dimension } * 1.414 );
-            height: 1px;
-            background-color: #fff;
-            transform: rotate( 135deg );
-            transform-origin: 100% 100%;
-        }
-
-        &-red {
-            &:after {
-                background-color: #f00;
-            }
-        }
-    }
-
     .main {
         padding: 20px;
         margin: 20px;
