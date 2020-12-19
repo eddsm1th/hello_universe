@@ -5,7 +5,7 @@
             'instantiated' : instantiated
         }"
     >
-        <helloUniverse
+<!--         <helloUniverse
             v-if="loaded"
         />
 
@@ -27,7 +27,7 @@
                     :celestial_body="selected_celestial_body"
                 />
             </div>
-        </section>
+        </section> -->
 
        <!--  <accordion
             v-for="accordion, index in accordions"
@@ -35,6 +35,8 @@
             :content="accordion.content"
             :child_component="accordion.child_component"
         ></accordion> -->
+
+
     </main>
 </template>
 
@@ -43,6 +45,9 @@
     import helloUniverse from './vue-components/helloUniverse.vue';
     import solarSystemSelector from './vue-components/solarSystemSelector.vue';
     import solarSystemEditor from './vue-components/solarSystemEditor.vue';
+
+
+    import { create_celestial_body } from './js-components/celestial_body_generator.js';
 
     export default {
         name: 'app',
@@ -56,6 +61,7 @@
 
         data () {
             return {
+                placeholder_body: null,
                 instantiated: false,
                 loaded: false,
                 loading: false,
@@ -119,6 +125,8 @@
 
             setTimeout( () => this.instantiated = true, 300 );
             setTimeout( () => this.loaded = true, 500 ); 
+
+            this.placeholder_body = create_celestial_body();
         },
 
         methods: {
