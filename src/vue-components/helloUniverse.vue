@@ -1,6 +1,6 @@
 <template>
 	<section
-		class="hello-universe clipped"
+		class="hello-universe"
 		:style="{
 			height : correct_height,
 		}"
@@ -136,6 +136,8 @@
 </script>
 
 <style lang="scss">
+	@import "../scss-components/_mixins.scss";
+	
 	.hello-universe {
 		transition: .3s height ease;
 		overflow: hidden;
@@ -157,6 +159,7 @@
 		}
 
 		&__text {
+			@include clipped;
 			flex: 1;
 			padding: 8px 12px;
 			font-size: 14px;

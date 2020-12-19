@@ -54,10 +54,10 @@
 		</ul>
 
 		<ul class="selector__options">
-			<li class="selector__option clipped">
+			<li class="selector__option">
 				<button @click="create_solar_system()">New_solar_system</button>
 			</li>
-			<li class="selector__option clipped">
+			<li class="selector__option">
 				<button>Browse_(WIP)</button>
 			</li>
 		</ul>
@@ -146,10 +146,6 @@
 				font-size: 10px;
 			}
 
-			> * {
-				transition: .2s opacity ease;
-			}
-
 			&.blackhole {
 				border: 1px solid transparent;
 				background-color: transparent;
@@ -176,6 +172,7 @@
 		}
 
 		&__option {
+			@include clipped;
 			padding-left: 12px;
 			min-width: 50%;
 			font-size: 12px;
@@ -207,7 +204,6 @@
 			width: 1em;
 			height: 1em;
 			border: 1px solid #fff;
-			transition: .2s border ease;
 			transform: translateY(-50%);
 
 			&:hover {
@@ -227,7 +223,6 @@
 				height: 144%;
 				transform: translate( -50%, -50%) rotate(45deg);
 				background: #fff;
-				transition: .2s background-color ease;
 			}
 
 			&:after {

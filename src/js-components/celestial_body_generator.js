@@ -3,7 +3,6 @@
 		layer_options = { ...get_celestial_body_defaults(), ...layer_options };
 		layer_options.final_frequency_count = get_final_frequency_count( layer_options );
 
-
 		// move to own file
 		const 	flat_data = get_flat_array( layer_options ),
 				octahedron_data = map_flat_data_to_octahedron( flat_data, layer_options ),
@@ -50,12 +49,15 @@
 		return flat_array.map( ( layer, index ) => {
 			const 	points_per_side = Math.ceil( ( layer.length / 4 ) ),
 					layer_offset = ( ( step_size / 2 ) * index ),
-					stepped_side_array = new Array( points_per_side ).fill().map( ( item, stepped_side_index ) => ( ( stepped_side_index * step_size ) - layer_offset ) ),
-					start_value = new Array( points_per_side ).fill( layer_offset ),
-					end_value = new Array( points_per_side ).fill( layer_offset * -1 ),
-					x_layer_data = [ stepped_side_array, end_value, stepped_side_array.reverse(), start_value ].flat(),
-					z_layer_data = [ end_value, stepped_side_array.reverse(), start_value, stepped_side_array ].flat();
 
+					stepped_side_array = new Array( points_per_side ).fill( null ).map( ( item, stepped_side_index ) => ( ( stepped_side_index * step_size ) - layer_offset ) ),
+					reverse_stepped_side_array = stepped_side_array.map( stepped_side_val => stepped_side_val * -1 ),
+
+					start_value = new Array( points_per_side ).fill( layer_offset * -1 ),
+					end_value = start_value.map( end_val => end_val *= -1 ),
+
+					x_layer_data = [ stepped_side_array, end_value, reverse_stepped_side_array, start_value ].flat(),
+					z_layer_data = [ end_value, reverse_stepped_side_array, start_value, stepped_side_array ].flat();
 
 			// needs rethinking
 			return layer.map( ( layer_item, sub_index ) => {
