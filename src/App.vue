@@ -1,6 +1,6 @@
 <template>
     <main
-        class="main"
+        class="main_"
         :class="{
             'instantiated' : instantiated
         }"
