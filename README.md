@@ -1,5 +1,5 @@
 # Hello_Universe
-> Faciam te in astra
+> sic itur ad astra
 
 ## Build Setup
 
