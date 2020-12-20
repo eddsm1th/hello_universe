@@ -5,20 +5,22 @@
 
 		// move to own file
 		const 	flat_data = get_flat_array( layer_options ),
-				octahedron_data = map_flat_data_to_octahedron( flat_data, layer_options ),
-				hemispherical_data = map_octahedron_data_to_hemisphere( octahedron_data, layer_options ),
-				spherical_data = [ ...hemispherical_data, ...hemispherical_data.slice( 0, hemispherical_data.length - 1 ).reverse().map( layer => layer.map( ( layer_item ) => ( { ...layer_item, ...{ y: layer_item.y * -1 } } ) ) ) ];
+				octahedron_data = map_flat_data_to_octahedron( flat_data, layer_options );
+				// hemispherical_data = map_octahedron_data_to_hemisphere( octahedron_data, layer_options ),
+				// spherical_data = [ ...hemispherical_data, ...hemispherical_data.slice( 0, hemispherical_data.length - 1 ).reverse().map( layer => layer.map( ( layer_item ) => ( { ...layer_item, ...{ y: layer_item.y * -1 } } ) ) ) ];
 
 		const 	scene = new THREE.Scene(),
 				camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, .1, 1000 ),
 				renderer = new THREE.WebGLRenderer();
 
-				renderer.setSize( window.innerWidth, window.innerHeight );
+		renderer.setSize( window.innerWidth, window.innerHeight );
 		document.body.appendChild( renderer.domElement );
 
-		camera.position.z = 800; // make this more relative to planet size and window
+		camera.position.z = 1200; // make this more relative to planet size and window
 
-		spherical_data.flat().forEach( ( item ) => {
+		console.log( octahedron_data );
+
+		octahedron_data.flat().forEach( ( item ) => {
 			const geometry = new THREE.SphereGeometry( 5, 1, 1 );
 			const material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
 			const sphere = new THREE.Mesh( geometry, material );
@@ -36,7 +38,7 @@
 		}
 		animate();
 
-		return spherical_data;
+		// return spherical_data;
 	}
 
 	const apply_drag_controls = ( scene ) => {
@@ -72,7 +74,7 @@
 
 	const get_celestial_body_defaults = () => {
 		return {
-			'base_frequency' : 10,
+			'base_frequency' : 6,
 			'layers' : 1,
 			'radius' : 600,
 			'amp_bias' : 0,
@@ -88,7 +90,7 @@
 
 			layer.forEach( ( { x, y, z }, sub_index ) => {
 				const 	xzy_length_to_center = Math.sqrt( ( y * y ) + ( x * x ) + ( z * z ) ),
-						coords_multiplier = ( ( radius * .75 ) / xzy_length_to_center );
+						coords_multiplier = ( radius / xzy_length_to_center );
 
 				[
 					current_layer[ sub_index ],
@@ -99,34 +101,45 @@
 					inst.y *= coords_multiplier;
 					inst.x *= coords_multiplier; 
 					inst.z *= coords_multiplier; 
-				})
+				} )
 			} );
 		} );
 
 		return octahedron_data;
 	}
 
+	const degree_in_radians = angle => angle * ( Math.PI / 180 );
+
 	const map_flat_data_to_octahedron = ( flat_array, { radius, final_frequency_count } ) => {
-		const step_size = ( ( radius * .75 ) / ( final_frequency_count - 1 ) );
+		let cumulative_traversial_distance = 0,
+			layer_angle_increment = ( 90 / ( final_frequency_count - 1 ) );
 
-		return flat_array.map( ( layer, index ) => {
+		return flat_array.map( ( layer, index ) => { 	
 			const 	points_per_side = Math.ceil( ( layer.length / 4 ) ),
-					layer_offset = ( ( step_size / 2 ) * index ),
+					angle_increment = 90 / points_per_side,
+					layer_traversial_radians = degree_in_radians( -45 + ( layer_angle_increment * index ) );
 
-					stepped_side_array = new Array( points_per_side ).fill( null ).map( ( item, stepped_side_index ) => ( ( stepped_side_index * step_size ) - layer_offset ) ),
+			cumulative_traversial_distance = ( Math.tan( layer_traversial_radians ) * radius );
+
+			console.log( cumulative_traversial_distance );
+					
+			const 	stepped_side_array = new Array( points_per_side ).fill( null ).map( ( item, stepped_side_index ) => {
+						const radians = degree_in_radians( -45 + ( angle_increment * stepped_side_index ) );	
+
+						return Math.tan( radians ) * cumulative_traversial_distance;
+					} ),
 					reverse_stepped_side_array = stepped_side_array.map( stepped_side_val => stepped_side_val * -1 ),
 
-					start_value = new Array( points_per_side ).fill( layer_offset * -1 ),
+					start_value = new Array( points_per_side ).fill( cumulative_traversial_distance * -1 ),
 					end_value = start_value.map( end_val => end_val *= -1 ),
 
 					x_layer_data = [ stepped_side_array, end_value, reverse_stepped_side_array, start_value ].flat(),
 					z_layer_data = [ end_value, reverse_stepped_side_array, start_value, stepped_side_array ].flat();
 
-			// needs rethinking
 			return layer.map( ( layer_item, sub_index ) => {
 				return {
 					'x' : x_layer_data[ sub_index ],
-					'y' : ( ( step_size * index ) - ( radius * .75 ) ),
+					'y' : ( radius - cumulative_traversial_distance ) / 2,
 					'z' : z_layer_data[ sub_index ],
 				};
 			} );
