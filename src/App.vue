@@ -5,7 +5,7 @@
             'instantiated' : instantiated
         }"
     >
-        <helloUniverse
+<!--         <helloUniverse
             v-if="loaded"
         />
 
@@ -27,9 +27,9 @@
                     :celestial_body="selected_celestial_body"
                 />
             </div>
-        </section>
+        </section> -->
 
-       <!--  <accordion
+<!--         <accordion
             v-for="accordion, index in accordions"
             :key="index"
             :content="accordion.content"

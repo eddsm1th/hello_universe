@@ -9,12 +9,70 @@
 				hemispherical_data = map_octahedron_data_to_hemisphere( octahedron_data, layer_options ),
 				spherical_data = [ ...hemispherical_data, ...hemispherical_data.slice( 0, hemispherical_data.length - 1 ).reverse().map( layer => layer.map( ( layer_item ) => ( { ...layer_item, ...{ y: layer_item.y * -1 } } ) ) ) ];
 
+		const 	scene = new THREE.Scene(),
+				camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, .1, 1000 ),
+				renderer = new THREE.WebGLRenderer();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+		document.body.appendChild( renderer.domElement );
+
+		camera.position.z = 800; // make this more relative to planet size and window
+
+		spherical_data.flat().forEach( ( item ) => {
+			const geometry = new THREE.SphereGeometry( 5, 1, 1 );
+			const material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+			const sphere = new THREE.Mesh( geometry, material );
+			sphere.position.x = item.x;
+			sphere.position.y = item.y;
+			sphere.position.z = item.z;
+			scene.add( sphere );
+		} );
+
+		apply_drag_controls( scene );
+
+		function animate() {
+				requestAnimationFrame( animate );
+				renderer.render( scene, camera );
+		}
+		animate();
+
 		return spherical_data;
+	}
+
+	const apply_drag_controls = ( scene ) => {
+		let click_coords = {
+			'x' : null,
+			'y' : null,
+		},
+		can_drag = false;
+
+		document.addEventListener( 'mousedown', ( event ) => {
+			can_drag = true;
+
+			click_coords = {
+				'x' : event.clientX,
+				'y' : event.clientY,
+			};
+		} );
+
+		document.addEventListener( 'mouseup', ( event ) => can_drag = false );
+
+		document.addEventListener( 'mousemove', ( event ) => {
+			if ( can_drag ) {
+				scene.rotation.y += ( ( click_coords.x - event.clientX ) / 400 );
+				scene.rotation.x += ( ( click_coords.y - event.clientY ) / 400 );
+
+				click_coords = {
+					'x' : event.clientX,
+					'y' : event.clientY,
+				};
+			} 
+		} );
 	}
 
 	const get_celestial_body_defaults = () => {
 		return {
-			'base_frequency' : 4,
+			'base_frequency' : 10,
 			'layers' : 1,
 			'radius' : 600,
 			'amp_bias' : 0,
@@ -29,14 +87,19 @@
 					current_layer = octahedron_data[ index + 1 ];
 
 			layer.forEach( ( { x, y, z }, sub_index ) => {
-				const xzy_length_to_center = Math.sqrt( ( y * y ) + ( x * x ) + ( z * z ) );
+				const 	xzy_length_to_center = Math.sqrt( ( y * y ) + ( x * x ) + ( z * z ) ),
+						coords_multiplier = ( ( radius * .75 ) / xzy_length_to_center );
 
 				[
 					current_layer[ sub_index ],
 					current_layer[ sub_index + points_per_side ],
 					current_layer[ sub_index + ( points_per_side * 2 ) ],
 					current_layer[ sub_index + ( points_per_side * 3 ) ],
-				].forEach( ( { x, y, z }, coords_multiplier = radius / xzy_length_to_center ) => [ x, y, z ].forEach( coord => coord *= coords_multiplier ) );
+				].forEach( inst => {
+					inst.y *= coords_multiplier;
+					inst.x *= coords_multiplier; 
+					inst.z *= coords_multiplier; 
+				})
 			} );
 		} );
 
@@ -44,7 +107,7 @@
 	}
 
 	const map_flat_data_to_octahedron = ( flat_array, { radius, final_frequency_count } ) => {
-		const step_size = ( radius / ( final_frequency_count - 1 ) );
+		const step_size = ( ( radius * .75 ) / ( final_frequency_count - 1 ) );
 
 		return flat_array.map( ( layer, index ) => {
 			const 	points_per_side = Math.ceil( ( layer.length / 4 ) ),
@@ -63,7 +126,7 @@
 			return layer.map( ( layer_item, sub_index ) => {
 				return {
 					'x' : x_layer_data[ sub_index ],
-					'y' : ( ( step_size * index ) - radius ),
+					'y' : ( ( step_size * index ) - ( radius * .75 ) ),
 					'z' : z_layer_data[ sub_index ],
 				};
 			} );
