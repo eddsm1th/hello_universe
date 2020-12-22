@@ -8,8 +8,6 @@
 		layer_options.final_frequency_count = get_final_frequency_count( layer_options );
 
 		data = create_base_point_data( layer_options );
-		// and on the 8th day, i ctrl+c ctrl+v the hemisphere to make the bottom half of the sphere
-		data = [ ...data, ...data.reverse().slice( 1, data.length ).map( layer => layer.map( ( layer_item ) => ( { ...layer_item, ...{ y: layer_item.y * -1 } } ) ) ) ];
 
 		// terrain_generation goes here
 
