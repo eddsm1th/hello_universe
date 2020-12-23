@@ -31,6 +31,7 @@
 							data[ sent_index ][ index + point_layer_offsets ].index,
 							( sent_arr[ index + 1 ] || sent_arr[ 0 ] ).index
 						) );
+						geometry.faces[ geometry.faces.length - 1 ].color = new THREE.Color( sent_arr[ index ].amp_value ? '' : 'red' );
 					}
 
 					create_corner_panel( current_layer, ( i - 1 ) );
@@ -42,6 +43,7 @@
 							data[ sent_index ][ index + point_layer_offsets - 1 ].index,
 							( data[ sent_index ][ index + point_layer_offsets ] || data[ sent_index ][ 0 ] ).index,
 						) );
+						geometry.faces[ geometry.faces.length - 1 ].color = new THREE.Color( sent_arr[ index ].amp_value ? '' : 'red' );
 					},
 					create_lower_panel = ( sent_arr, sent_index ) => {
 						geometry.faces.push( new THREE.Face3(
@@ -49,6 +51,7 @@
 							( data[ sent_index ][ index + point_layer_offsets ] || data[ sent_index ][ 0 ] ).index,
 							( sent_arr[ index + 1 ] || sent_arr[ 0 ] ).index
 						) );
+						geometry.faces[ geometry.faces.length - 1 ].color = new THREE.Color( sent_arr[ index ].amp_value ? '' : 'red' );
 					};
 
 					create_upper_panel( current_layer, ( i - 1 ) );
@@ -60,13 +63,21 @@
 		}
 
 		const 	material = new THREE.MeshBasicMaterial( {
-					color: 0x00ff00,
-					wireframe: true,
+					vertexColors: THREE.FaceColors,
+					wireframe: false,
 					side: THREE.DoubleSide,
 				} ),
 				terrain = new THREE.Mesh( geometry, material );
 
 		scene.add( terrain );
+
+		const 	outlineMaterial1 = new THREE.MeshBasicMaterial( {
+					color: 0x000000,
+					wireframe: true,
+				} ),
+				outlineMesh1 = new THREE.Mesh( geometry, outlineMaterial1 );
+
+  		scene.add( outlineMesh1 );
 
 		apply_drag_controls( scene );
 

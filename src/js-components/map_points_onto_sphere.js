@@ -6,9 +6,8 @@
 			const 	points_per_side = layer.length,
 					current_layer = data[ index + 1 ];
 
-			layer.forEach( ( { x, y, z }, sub_index ) => {
-				const 	xzy_length_to_center = Math.sqrt( ( y * y ) + ( x * x ) + ( z * z ) ),
-						coords_multiplier = ( radius / xzy_length_to_center );
+			layer.forEach( ( { x, y, z, amp_value }, sub_index ) => {
+				const 	xzy_length_to_center = Math.sqrt( ( y * y ) + ( x * x ) + ( z * z ) );	
 
 				[
 					current_layer[ sub_index ],
@@ -16,6 +15,8 @@
 					current_layer[ sub_index + ( points_per_side * 2 ) ],
 					current_layer[ sub_index + ( points_per_side * 3 ) ],
 				].forEach( inst => {
+					const coords_multiplier = ( radius / ( xzy_length_to_center - ( inst.amp_value || 0 ) ) );
+
 					inst.y *= coords_multiplier;
 					inst.x *= coords_multiplier; 
 					inst.z *= coords_multiplier; 
