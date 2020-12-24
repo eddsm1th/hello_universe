@@ -14,7 +14,7 @@ npm run dev
 npm run build
 ```
 
-## Build Setup
+## TODO
 ```
 FIXES:
 	- plot planet without mirroring points to avoid seam issue on equator
