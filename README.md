@@ -19,6 +19,8 @@ npm run build
 FIXES:
 	- plot planet without mirroring points to avoid seam issue on equator
 	- alter offet on bottom half of planet when generating terrain to use the correct value
+	- update layer tan method to work on layer indexes
+	- rethink about terrain generation
 
 FEATURES
 	- seperate above and below sea level generation values

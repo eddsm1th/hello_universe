@@ -21,7 +21,7 @@
 	}
 
 	const get_celestial_body_defaults = () => ( {
-		'base_frequency' : 12,
+		'base_frequency' : 20,
 		'layers' : 3,
 		'radius' : 600,
 		'amp_bias' : 0,
