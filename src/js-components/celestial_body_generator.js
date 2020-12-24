@@ -16,6 +16,8 @@
 
 		render_data( data );
 
+		console.log('Theorised max amp:\t' + 105 );
+
 		console.log( 'Max amp: \t' + Math.max.apply( Math, data.flat().map( i => i.amp_value || 0 ) ) );
 		console.log( 'Min amp: \t' + Math.min.apply( Math, data.flat().map( i => i.amp_value || 0 ) ) );
 		console.log( data );
@@ -27,8 +29,8 @@
 	}
 
 	const get_celestial_body_defaults = () => ( {
-		'base_frequency' : 8,
-		'layers' : 1,
+		'base_frequency' : 4,
+		'layers' : 4,
 		'radius' : 600,
 		'amp_bias' : 0,
 		'amp_diff' : 2,

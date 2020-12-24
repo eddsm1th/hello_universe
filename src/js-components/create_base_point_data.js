@@ -29,6 +29,7 @@
 				'x' : x_layer_data[ sub_index ],
 				'y' : cumulative_traversial_distance * -1 + radius,
 				'z' : z_layer_data[ sub_index ],
+				'amp_value' : 0,
 			} ) );
 		} );
 	}
