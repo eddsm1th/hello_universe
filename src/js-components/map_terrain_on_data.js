@@ -55,10 +55,7 @@
 		return data;
 	}
 
-	const get_average_from_array = array => {
-		return array.map( ref => ref.base_average || 0 ).reduce( ( a, b ) => a + b, 0 ) / array.length
-
-	}
+	const get_average_from_array = array => array.map( ref => ref.base_average || 0 ).reduce( ( a, b ) => a + b, 0 ) / array.length;
 
 	const infinite_array_reference = ( array, index ) => array[ index - ( Math.floor( index / array.length ) * array.length ) ];
 
