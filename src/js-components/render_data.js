@@ -21,11 +21,6 @@
 
 			let point_layer_offsets = 1;
 
-			/*
-				Rethink this to remove the seam
-					- needs to do them all sequentially, no mirroring
-					- should solve the dark equator problem (i hope)
-			*/
 			current_layer.forEach( ( layer_item, index ) => {
 				if ( index % points_per_side == 0 ) {
 					point_layer_offsets -= 1;

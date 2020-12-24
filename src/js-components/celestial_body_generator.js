@@ -9,11 +9,7 @@
 		layer_options.final_frequency_count = get_final_frequency_count( layer_options );
 
 		data = create_base_point_data( layer_options );
-
-		console.log( data );
-
 		data = map_terrain_on_data( data, layer_options );
-
 		data = map_points_onto_sphere( data, layer_options );		
 
 		render_data( data );

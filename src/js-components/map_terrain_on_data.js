@@ -63,7 +63,6 @@
 		const 	amp_multiplier = 1 / Math.pow( amp_diff, i ),
 				amp_value = ( amp_bias == 0 ? Math.random() : get_amp_bias( Math.random(), amp_diff ) ) * 2 - 1;
 
-		// return 60 * amp_multiplier;
 		return ( amp_value * amp_multiplier ) * 20;
 	}
 
