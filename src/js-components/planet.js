@@ -33,22 +33,7 @@
 		// looking to the sky to see other peoples solar systems
 			// your grid is a little grid inside a huge grid
 
-
-H		462
-E		38
-L		31
-L		38
-O		19
-_		27
-U		44
-N		55
-I		26
-V		34
-E		29
-R		18
-S		49
-E		16
-*/
+	*/
 
 import { generate_point_data } from './planet_panel_mesh_generation.js';
 

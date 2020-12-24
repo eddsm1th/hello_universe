@@ -24,5 +24,5 @@
 			} );
 		} );
 
-		return [ ...data ];
+		return data;
 	}

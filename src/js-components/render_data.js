@@ -21,6 +21,11 @@
 
 			let point_layer_offsets = 1;
 
+			/*
+				Rethink this to remove the seam
+					- needs to do them all sequentially, no mirroring
+					- should solve the dark equator problem (i hope)
+			*/
 			current_layer.forEach( ( layer_item, index ) => {
 				if ( index % points_per_side == 0 ) {
 					point_layer_offsets -= 1;
@@ -31,7 +36,6 @@
 							data[ sent_index ][ index + point_layer_offsets ].index,
 							( sent_arr[ index + 1 ] || sent_arr[ 0 ] ).index
 						) );
-						geometry.faces[ geometry.faces.length - 1 ].color = new THREE.Color( sent_arr[ index ].shoop ? '' : 'red' );
 					}
 
 					create_corner_panel( current_layer, ( i - 1 ) );
@@ -43,7 +47,6 @@
 							data[ sent_index ][ index + point_layer_offsets - 1 ].index,
 							( data[ sent_index ][ index + point_layer_offsets ] || data[ sent_index ][ 0 ] ).index,
 						) );
-						geometry.faces[ geometry.faces.length - 1 ].color = new THREE.Color( sent_arr[ index ].shoop ? '' : 'red' );
 					},
 					create_lower_panel = ( sent_arr, sent_index ) => {
 						geometry.faces.push( new THREE.Face3(
@@ -51,7 +54,7 @@
 							( data[ sent_index ][ index + point_layer_offsets ] || data[ sent_index ][ 0 ] ).index,
 							( sent_arr[ index + 1 ] || sent_arr[ 0 ] ).index
 						) );
-						geometry.faces[ geometry.faces.length - 1 ].color = new THREE.Color( sent_arr[ index ].shoop ? '' : 'red' );
+						geometry.faces[ geometry.faces.length - 1 ].color = new THREE.Color( 'green' );
 					};
 
 					create_upper_panel( current_layer, ( i - 1 ) );
@@ -62,23 +65,32 @@
 			} );
 		}
 
-		const 	material = new THREE.MeshBasicMaterial( {
-					vertexColors: THREE.FaceColors,
-					wireframe: false,
+		const 	material = new THREE.MeshLambertMaterial( {
+					color: 'forestgreen',
 					side: THREE.DoubleSide,
+					flatShading: false
 				} ),
 				terrain = new THREE.Mesh( geometry, material );
 
-		scene.add( terrain );
+		geometry.computeFaceNormals();
+		geometry.computeVertexNormals()	
 
-		const 	outlineMaterial1 = new THREE.MeshBasicMaterial( {
-					color: 0x000000,
-					wireframe: true,
+		const 	s_geometry = new THREE.SphereGeometry( 600, 32, 32 ),
+				s_material = new THREE.MeshPhongMaterial( {
+					color: 'blue',
+					opacity: .5,
+					transparent: true,
+					reflectivity: 1,
 				} ),
-				outlineMesh1 = new THREE.Mesh( geometry, outlineMaterial1 );
+				sphere = new THREE.Mesh( s_geometry, s_material );
 
-  		scene.add( outlineMesh1 );
+		const ambient = new THREE.AmbientLight( 0xffffff, .1 );
+		ambient.position.z = 1000;
 
+		const directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
+		directionalLight.position.z = 1000;
+
+		scene.add( terrain, sphere, ambient, directionalLight );
 		apply_drag_controls( scene );
 
 		function animate() {
