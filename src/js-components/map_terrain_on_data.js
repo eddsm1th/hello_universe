@@ -25,7 +25,7 @@
 								const 	previous_reference_point = infinite_array_reference( data[ layer_index - point_diff ], point_index + point_layer_offset ),
 										next_reference_point = infinite_array_reference( data[ layer_index + point_diff ], point_index + point_layer_offset ),
 										reference_point_array = [ previous_reference_point ],
-										reference_average_height = reference_point_array.map( ref => ref[ 'layer_' + ( i - 1 ) + '_amp' ] || 0 ).reduce( ( a, b ) => a + b, 0 ) / reference_point_array.length;
+										reference_average_height = get_average_from_array( reference_point_array )
 
 								current_point.amp_value = ( reference_average_height + amp_value );
 								current_point.base_average = reference_average_height;
@@ -36,12 +36,10 @@
 							} else {
 								const 	previous_reference_point = infinite_array_reference( data[ layer_index - point_diff ], point_index - point_diff + point_layer_offset ),
 										next_reference_point = infinite_array_reference( data[ layer_index - point_diff ], point_index + point_layer_offset ),
-
 										previous_lateral_reference_point = infinite_array_reference( data[ layer_index ], point_index - point_diff ),
 										next_lateral_reference_point = infinite_array_reference( data[ layer_index ], point_index + point_diff ),
-
 										reference_point_array = [ previous_reference_point, next_reference_point, previous_lateral_reference_point, next_lateral_reference_point ],
-										reference_average_height = reference_point_array.map( ref => ref.base_average || 0 ).reduce( ( a, b ) => a + b, 0 ) / reference_point_array.length;
+										reference_average_height = get_average_from_array( reference_point_array )
 
 								current_point.amp_value = ( reference_average_height + amp_value );
 								current_point.base_average = reference_average_height;
@@ -55,6 +53,11 @@
 		} 
 
 		return data;
+	}
+
+	const get_average_from_array = array => {
+		return array.map( ref => ref.base_average || 0 ).reduce( ( a, b ) => a + b, 0 ) / array.length
+
 	}
 
 	const infinite_array_reference = ( array, index ) => array[ index - ( Math.floor( index / array.length ) * array.length ) ];
