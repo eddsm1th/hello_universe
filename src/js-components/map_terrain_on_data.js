@@ -16,33 +16,25 @@
 					if ( i == 0 ) {
 						current_point.amp_value = current_point.base_average = amp_value;
 					} else {
-						if ( point_index % points_per_side == 0 ) { // corner peices
-							point_layer_offset -= point_diff;
+						if ( current_point.amp_value ) {
+							current_point.amp_value += amp_value;
+						} else {
+							if ( point_index % points_per_side == 0 ) { // corner peices
+								point_layer_offset -= point_diff;
 
-							if ( current_point.amp_value ) {
-								current_point.amp_value += amp_value;
-							} else {
 								const 	previous_reference_point = infinite_array_reference( data[ layer_index - point_diff ], point_index + point_layer_offset ),
 										next_reference_point = infinite_array_reference( data[ layer_index + point_diff ], point_index + point_layer_offset ),
-										reference_point_array = [ previous_reference_point ],
-										reference_average_height = get_average_from_array( reference_point_array )
+										reference_point_array = [ previous_reference_point ];
 
-								current_point.amp_value = ( reference_average_height + amp_value );
-								current_point.base_average = reference_average_height;
-							}
-						} else {
-							if ( current_point.amp_value ) {
-								current_point.amp_value += amp_value;
+								apply_amp_to_point( current_point, reference_point_array, amp_value );
 							} else {
 								const 	previous_reference_point = infinite_array_reference( data[ layer_index - point_diff ], point_index - point_diff + point_layer_offset ),
 										next_reference_point = infinite_array_reference( data[ layer_index - point_diff ], point_index + point_layer_offset ),
 										previous_lateral_reference_point = infinite_array_reference( data[ layer_index ], point_index - point_diff ),
 										next_lateral_reference_point = infinite_array_reference( data[ layer_index ], point_index + point_diff ),
-										reference_point_array = [ previous_reference_point, next_reference_point, previous_lateral_reference_point, next_lateral_reference_point ],
-										reference_average_height = get_average_from_array( reference_point_array )
+										reference_point_array = [ previous_reference_point, next_reference_point, previous_lateral_reference_point, next_lateral_reference_point ];
 
-								current_point.amp_value = ( reference_average_height + amp_value );
-								current_point.base_average = reference_average_height;
+								apply_amp_to_point( current_point, reference_point_array, amp_value );
 							}
 						}
 					}
@@ -54,6 +46,14 @@
 
 		return data;
 	}
+
+	const apply_amp_to_point = ( point, array, amp ) => {
+		const reference_average_height = get_average_from_array( array )
+
+		point.amp_value = ( reference_average_height + amp );
+		point.base_average = reference_average_height;
+	}
+	
 
 	const get_average_from_array = array => array.map( ref => ref.base_average || 0 ).reduce( ( a, b ) => a + b, 0 ) / array.length;
 
