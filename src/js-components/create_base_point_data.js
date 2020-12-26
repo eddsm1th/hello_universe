@@ -2,6 +2,7 @@
 	export const create_base_point_data = layer_options => {
 		const data = map_flat_data_to_octahedron( get_flat_array( layer_options ), layer_options );
 
+		
 		// and on the 8th day, i ctrl+c ctrl+v the hemisphere to make the bottom half of the sphere
 		return [ ...data, ...data.reverse().slice( 1, data.length ).map( layer => layer.map( ( layer_item ) => ( { ...layer_item, ...{ y: layer_item.y * -1 } } ) ) ) ]
 	}

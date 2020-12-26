@@ -61,31 +61,32 @@
 		}
 
 		const 	material = new THREE.MeshLambertMaterial( {
-					color: 'forestgreen',
 					side: THREE.DoubleSide,
-					flatShading: false
+					flatShading: false,
+					wireframe: true,
 				} ),
 				terrain = new THREE.Mesh( geometry, material );
 
 		geometry.computeFaceNormals();
 		geometry.computeVertexNormals()	
 
-		const 	s_geometry = new THREE.SphereGeometry( 600, 32, 32 ),
-				s_material = new THREE.MeshPhongMaterial( {
-					color: 'blue',
-					opacity: .5,
-					transparent: true,
-					reflectivity: 1,
-				} ),
-				sphere = new THREE.Mesh( s_geometry, s_material );
+		// const 	s_geometry = new THREE.SphereGeometry( 600, 32, 32 ),
+		// 		s_material = new THREE.MeshPhongMaterial( {
+		// 			color: 'blue',
+		// 			opacity: .5,
+		// 			transparent: true,
+		// 			reflectivity: 1,
+		// 		} ),
+		// 		sphere = new THREE.Mesh( s_geometry, s_material );
 
-		const ambient = new THREE.AmbientLight( 0xffffff, .1 );
+		const ambient = new THREE.AmbientLight( 0xffffff, 1 );
 		ambient.position.z = 1000;
 
 		const directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
 		directionalLight.position.z = 1000;
 
-		scene.add( terrain, sphere, ambient, directionalLight );
+		// scene.add( terrain, sphere, ambient, directionalLight );
+		scene.add( terrain, ambient );
 		apply_drag_controls( scene );
 
 		function animate() {

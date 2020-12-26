@@ -10,9 +10,16 @@
 
 		data = create_base_point_data( layer_options );
 		data = map_terrain_on_data( data, layer_options );
-		data = map_points_onto_sphere( data, layer_options );		
+		// data = map_points_onto_sphere( data, layer_options );		
 
 		render_data( data );
+		console.log( data );
+		console.log( 'Theoretical Max Amp: ' + 78.75 );
+		console.log( 'Max Amp: ' + Math.max( ...data.flat().map( i => i.amp_value ) ) );
+		console.log( 'Min Amp: ' + Math.min( ...data.flat().map( i => i.amp_value ) ) );
+		console.log( 'Data Item Count: ' + data.flat().length );
+
+		[ ...data.flat() ].forEach( data_item => { if ( data_item.amp_value != 60 && data_item.index < 41 ) { console.log( data_item ) } } );
 
 		return {
 			'layer_optons' : layer_options,
@@ -21,7 +28,7 @@
 	}
 
 	const get_celestial_body_defaults = () => ( {
-		'base_frequency' : 20,
+		'base_frequency' : 2,
 		'layers' : 3,
 		'radius' : 600,
 		'amp_bias' : 0,
