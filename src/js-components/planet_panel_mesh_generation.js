@@ -35,12 +35,18 @@ const degree_in_radians = angle => angle * ( Math.PI / 180 );
 
 // Get data to know how to stitch
 const get_injection_data = ( side_index ) => {
+	/*
+		where [ 1, 1 ] means the first side from the first panel
+
+		box model format: top, left, bottom, right
+	*/
+
 	switch ( side_index ) {
 		case 0 :
 		case 1 :
 			return null;
 		case 2 : // front
-			return [ [ 2, 0 ], null, [ 0, 1 ], null ]; // where [ 1, 1 ] means the first face from the first panel
+			return [ [ 2, 0 ], null, [ 0, 1 ], null ];
 		case 3 : // left
 			return [ null, [ 3, 0 ], [ 3, 2, true ], [ 3, 1, true ] ];
 		case 4 : // right
@@ -49,7 +55,6 @@ const get_injection_data = ( side_index ) => {
 			return [ [ 2, 1 ], [ 0, 4, true ], [ 0, 0 ], [ 0, 3 ] ];
 		default :
 			console.error( 'Something fucked up...' );
-			return;
 	}
 }
 
@@ -105,14 +110,16 @@ const generate_mesh = ( layer_options, amount_to_skip, final_freq_count, layer_i
 
 			for ( let j = 0; j < final_freq_count; j += amount_to_skip ) { // loop through single row
 				if ( j == 0 && injection_data && injection_data[ 3 ] ) {
-					const cloned_panel_data = sides[ injection_data[ 3 ][ 1 ] ];
+					const 	cloned_panel_data = sides[ injection_data[ 3 ][ 1 ] ],
+							cloned_amp = get_row_spliced_data( cloned_panel_data[ 'layer_' + layer_index ], injection_data[ 3 ][ 0 ], i, injection_data[ 3 ][ 2 ] );
 
-					mesh_row[ j ] = get_row_spliced_data( cloned_panel_data[ 'layer_' + layer_index ], injection_data[ 3 ][ 0 ], i, injection_data[ 3 ][ 2 ] );
+					mesh_row[ j ] = cloned_amp;
 				} else if ( j == final_freq_count - 1 && injection_data && injection_data[ 1 ] ) {
-					const cloned_panel_data = sides[ injection_data[ 1 ][ 1 ] ];
+					const 	cloned_panel_data = sides[ injection_data[ 1 ][ 1 ] ],
+							cloned_amp = get_row_spliced_data( cloned_panel_data[ 'layer_' + layer_index ], injection_data[ 1 ][ 0 ], i, injection_data[ 1 ][ 2 ] );
 
-					mesh_row[ j ] = get_row_spliced_data( cloned_panel_data[ 'layer_' + layer_index ], injection_data[ 1 ][ 0 ], i, injection_data[ 1 ][ 2 ] );
-				} else {
+					mesh_row[ j ] = cloned_amp;
+				} else { 
 					mesh_row[ j ] = generate_point_amp( layer_options, layer_index );
 				}
 
@@ -130,6 +137,13 @@ const generate_mesh = ( layer_options, amount_to_skip, final_freq_count, layer_i
 			mesh[ i ] = mesh_row;
 		}
 
+
+		/*
+			- TODO // fill layer is overriding the cloned data -
+
+			> clone layer amp from adjacent side and add to first in array
+				>> i think
+		*/
 		if ( i != 0 && amount_to_skip != 1 ) {
 			const 	previous_layer = mesh[ i - amount_to_skip ],
 					current_layer = mesh[ i ];

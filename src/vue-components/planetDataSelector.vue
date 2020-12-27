@@ -70,7 +70,7 @@
 					{
 						'title' : 'Amplitude_Layer_Division',
 						'slug' : 'amp_diff',
-						'value' : 2.4,
+						'value' : 2,
 						'min' : 1,
 						'max' : 10,
 						'active' : true
@@ -86,7 +86,7 @@
 					{
 						'title' : 'Base_Frequency',
 						'slug' : 'base_freq',
-						'value' : 8,
+						'value' : 4,
 						'min' : 2,
 						'max' : 36,
 						'active' : true
@@ -102,7 +102,7 @@
 					{
 						'title' : 'Base_Layers',
 						'slug' : 'base_layers',
-						'value' : 4,
+						'value' : 3,
 						'min' : 1,
 						'max' : 6,
 						'active' : true
