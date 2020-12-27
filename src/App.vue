@@ -46,8 +46,7 @@
     import solarSystemSelector from './vue-components/solarSystemSelector.vue';
     import solarSystemEditor from './vue-components/solarSystemEditor.vue';
 
-
-    import { create_celestial_body } from './js-components/celestial_body_generator.js';
+    // import { create_celestial_body } from './js-components/celestial_body_generator.js';
 
     export default {
         name: 'app',

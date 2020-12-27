@@ -7,15 +7,12 @@ export function generate_point_data ( layer_options, final_freq_count, sides_to_
 		for ( let j = 0; j < sides_to_render; j ++ ) {
 			if ( i == 0 ) sides.push( {} );
 
-			const injection_data = get_injection_data( j )
-
-			sides[ j ][ 'layer_' + i ] = generate_mesh( layer_options, amount_to_skip, final_freq_count, i, injection_data, sides, j );
+			sides[ j ][ 'layer_' + i ] = generate_mesh( layer_options, amount_to_skip, final_freq_count, i, get_injection_data( j ), sides, j );
 		}
 	}
 
-	const step = ( ( layer_options.radius * 2 ) / ( final_freq_count - 1 ) );
-
-	const angle_increment = 90 / ( final_freq_count - 1 );
+	const 	step = ( ( layer_options.radius * 2 ) / ( final_freq_count - 1 ) ),
+			angle_increment = 90 / ( final_freq_count - 1 );
 
 	sides.forEach( ( side ) => {
 		side[ 'data' ] = side.layer_0.map( ( item, index ) => {
@@ -31,7 +28,7 @@ export function generate_point_data ( layer_options, final_freq_count, sides_to_
 		} );
 	} );
 
-	return sides;			
+	return sides;
 }
 
 const degree_in_radians = angle => angle * ( Math.PI / 180 );

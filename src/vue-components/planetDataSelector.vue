@@ -86,7 +86,7 @@
 					{
 						'title' : 'Base_Frequency',
 						'slug' : 'base_freq',
-						'value' : 12,
+						'value' : 8,
 						'min' : 2,
 						'max' : 36,
 						'active' : true
@@ -102,7 +102,7 @@
 					{
 						'title' : 'Base_Layers',
 						'slug' : 'base_layers',
-						'value' : 4,
+						'value' : 5,
 						'min' : 1,
 						'max' : 6,
 						'active' : true
