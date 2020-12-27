@@ -10,16 +10,18 @@
 
 		data = create_base_point_data( layer_options );
 		data = map_terrain_on_data( data, layer_options );
-		// data = map_points_onto_sphere( data, layer_options );		
+		data = map_points_onto_sphere( data, layer_options );
+
+		const theoretical_max_amp = 78.75;		
 
 		render_data( data );
 		console.log( data );
-		console.log( 'Theoretical Max Amp: ' + 78.75 );
+		console.log( 'Theoretical Max Amp: ' + theoretical_max_amp );
 		console.log( 'Max Amp: ' + Math.max( ...data.flat().map( i => i.amp_value ) ) );
 		console.log( 'Min Amp: ' + Math.min( ...data.flat().map( i => i.amp_value ) ) );
 		console.log( 'Data Item Count: ' + data.flat().length );
 
-		[ ...data.flat() ].forEach( data_item => { if ( data_item.amp_value != 60 && data_item.index < 41 ) { console.log( data_item ) } } );
+		[ ...data.flat() ].forEach( data_item => { if ( data_item.amp_value != theoretical_max_amp && data_item.y >= 0 ) { console.log( data_item ) } } );
 
 		return {
 			'layer_optons' : layer_options,

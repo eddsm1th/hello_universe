@@ -94,11 +94,11 @@ const map_data_onto_sphere = ( grid_data, layer_options, final_freq_count ) => {
 					data[ mirrored_row_index ][ mirrored_column_index ],
 				].forEach( inst => {
 					if ( !inst.c2s_mapped ) {
-						const coords_multiplier = layer_options.radius / ( xzy_length_to_center - inst.amp_value );
+						const coords_multiplier = layer_options.radius / ( xzy_length_to_center - ( apply_amp ? inst.amp_value : 0 ) );
 
-						inst.y = inst.y * coords_multiplier;
-						inst.x = inst.x * coords_multiplier; 
-						inst.z = inst.z * coords_multiplier; 
+						inst.y *= coords_multiplier;
+						inst.x *= coords_multiplier; 
+						inst.z *= coords_multiplier; 
 
 						inst[ 'c2s_mapped' ] = true;
 					}
@@ -122,9 +122,7 @@ const get_colour_by_height = ( a, b, c, layer_options ) => {
 const plot_points = ( grid_data, final_freq_count, layer_options, rotation_values_index, scene, apply_amp = false ) => {
 	const geometry = new THREE.Geometry();
 
-	[...grid_data].flat().forEach( ( item ) => {
-		geometry.vertices.push( new THREE.Vector3( item.x, item.y + ( apply_amp ? item.amp_value : 0 ), item.z ) );
-	} );
+	[ ...grid_data ].flat().forEach( ( item ) => geometry.vertices.push( new THREE.Vector3( item.x, item.y + ( apply_amp ? item.amp_value : 0 ), item.z ) ) );
 
 	for ( let i = 1; i < grid_data.length; i ++ ) {
 		for ( let j = 0; j < grid_data[ i ].length - 1; j ++ ) {
@@ -227,7 +225,7 @@ export function create_planet ( layer_options ) {
 		renderer.setSize( window.innerWidth, window.innerHeight );
 		document.body.appendChild( renderer.domElement );
 
-		camera.position.z = 1000; // make this more relative to planet size and window
+		camera.position.z = 1200; // make this more relative to planet size and window
 
 		for ( let i = 0; i < sides_to_render; i ++ ) {
 			plot_points( grid_data[ i ][ 'data' ], final_freq_count, layer_options, i, scene )

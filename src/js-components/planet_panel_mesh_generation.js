@@ -15,14 +15,16 @@ export function generate_point_data ( layer_options, final_freq_count, sides_to_
 
 	const step = ( ( layer_options.radius * 2 ) / ( final_freq_count - 1 ) );
 
+	const angle_increment = 90 / ( final_freq_count - 1 );
+
 	sides.forEach( ( side ) => {
 		side[ 'data' ] = side.layer_0.map( ( item, index ) => {
 			return item.map( ( sub_item, sub_index ) => {
 				return {
 					'amp_value' : get_total_amp( layer_options, side, index, sub_index ),
 					'y' : layer_options.radius,
-					'x' : ( step * sub_index ) - layer_options.radius,
-					'z' : ( step * index ) - layer_options.radius,
+					'x' : Math.tan( degree_in_radians( -45 + ( angle_increment * sub_index ) ) ) * layer_options.radius,
+					'z' : Math.tan( degree_in_radians( -45 + ( angle_increment * index ) ) ) * layer_options.radius,
 					'index' : sub_index + ( index * final_freq_count ), 
 				}
 			} );
@@ -31,6 +33,8 @@ export function generate_point_data ( layer_options, final_freq_count, sides_to_
 
 	return sides;			
 }
+
+const degree_in_radians = angle => angle * ( Math.PI / 180 );
 
 // Get data to know how to stitch
 const get_injection_data = ( side_index ) => {
@@ -65,6 +69,8 @@ const get_spliced_data = ( data, side_index, is_negative ) => {
 			const arr = data.map( ( item ) => item[ 0 ] );
 
 			return ( is_negative ? arr.reverse() : arr );
+		default :
+			console.error( 'Something fucked up...' );
 	}
 }
 

@@ -29,12 +29,12 @@
             </div>
         </section> -->
 
-<!--         <accordion
+        <accordion
             v-for="accordion, index in accordions"
             :key="index"
             :content="accordion.content"
             :child_component="accordion.child_component"
-        ></accordion> -->
+        ></accordion>
 
 
     </main>
@@ -126,7 +126,7 @@
             setTimeout( () => this.instantiated = true, 300 );
             setTimeout( () => this.loaded = true, 500 ); 
 
-            this.placeholder_body = create_celestial_body();
+            // this.placeholder_body = create_celestial_body();
         },
 
         methods: {

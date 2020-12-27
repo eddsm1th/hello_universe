@@ -34,7 +34,7 @@
 					}
 
 					create_corner_panel( current_layer, ( i - 1 ) );
-					create_corner_panel( polar_current_layer, ( data.length - i  ) );
+					// create_corner_panel( polar_current_layer, ( data.length - i  ) );
 				} else {
 					const create_upper_panel = ( sent_arr, sent_index ) => {
 						geometry.faces.push( new THREE.Face3(
@@ -53,9 +53,9 @@
 					};
 
 					create_upper_panel( current_layer, ( i - 1 ) );
-					create_upper_panel( polar_current_layer, ( data.length - i ) );
+					// create_upper_panel( polar_current_layer, ( data.length - i ) );
 					create_lower_panel( current_layer, ( i - 1 ) );
-					create_lower_panel( polar_current_layer, ( data.length - i ) );
+					// create_lower_panel( polar_current_layer, ( data.length - i ) );
 				}
 			} );
 		}
