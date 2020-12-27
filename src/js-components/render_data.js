@@ -54,8 +54,7 @@
 
 		camera.position.z = ambient.position.z = directionalLight.position.z = 1000; // make camera position more relative to window and readius
 
-		// scene.add( ambient, directionalLight, sphere );
-		scene.add( ambient, directionalLight );
+		scene.add( ambient, directionalLight, sphere );
 
 		function animate() {
 			requestAnimationFrame( animate );
@@ -79,7 +78,7 @@
 					wireframe: true,
 				} ) );
 
-		[ ...grid_data ].flat().forEach( ( item ) => geometry.vertices.push( new THREE.Vector3( item.x, item.y + item.amp_value, item.z ) ) );
+		[ ...grid_data ].flat().forEach( ( item ) => geometry.vertices.push( new THREE.Vector3( item.x, item.y, item.z ) ) );
 
 		for ( let i = 1; i < grid_data.length; i ++ ) {
 			for ( let j = 0; j < grid_data[ i ].length - 1; j ++ ) {

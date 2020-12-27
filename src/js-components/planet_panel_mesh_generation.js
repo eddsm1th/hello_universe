@@ -82,6 +82,8 @@ const get_row_spliced_data = ( data, side_index, current_row_index, is_negative 
 			return data[ data.length - 1 ][ ( is_negative ? data[ 0 ].length - current_row_index : current_row_index ) ];
 		case 3 :
 			return data[ is_negative ? data.length - 1 - current_row_index : current_row_index ][ 0 ];
+		default : 
+			console.error( 'Something fucked up...' );
 	}
 }
 
