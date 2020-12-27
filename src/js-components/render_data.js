@@ -72,7 +72,6 @@
 				material = ( use_colours ? new THREE.MeshLambertMaterial( {
 					vertexColors: THREE.FaceColors,
 					side: THREE.DoubleSide,
-					flatShading: false
 				} ) : new THREE.MeshBasicMaterial( {
 					color: colours[ rotation_values_index ],
 					wireframe: true,
@@ -98,7 +97,7 @@
 		}
 
 		geometry.computeFaceNormals();
-		geometry.computeVertexNormals();
+		// geometry.computeVertexNormals();
 
 		const terrain = new THREE.Mesh( geometry, material );
 

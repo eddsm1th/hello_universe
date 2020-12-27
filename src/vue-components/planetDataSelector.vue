@@ -62,7 +62,7 @@
 					{
 						'title' : 'Base_Amplitude',
 						'slug' : 'base_amp',
-						'value' : 60,
+						'value' : 100,
 						'min' : 0,
 						'max' : 200,
 						'active' : true
@@ -70,7 +70,7 @@
 					{
 						'title' : 'Amplitude_Layer_Division',
 						'slug' : 'amp_diff',
-						'value' : 2,
+						'value' : 2.4,
 						'min' : 1,
 						'max' : 10,
 						'active' : true
@@ -78,7 +78,7 @@
 					{
 						'title' : 'Amplitude_Bias',
 						'slug' : 'amp_bias',
-						'value' : 0,
+						'value' : 4,
 						'min' : -100,
 						'max' : 100,
 						'active' : true
@@ -102,7 +102,7 @@
 					{
 						'title' : 'Base_Layers',
 						'slug' : 'base_layers',
-						'value' : 5,
+						'value' : 4,
 						'min' : 1,
 						'max' : 6,
 						'active' : true
