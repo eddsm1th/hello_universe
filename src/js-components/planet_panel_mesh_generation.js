@@ -149,7 +149,7 @@ const generate_mesh = ( layer_options, amount_to_skip, final_freq_count, layer_i
 					current_layer = mesh[ i ];
 
 			for ( let z = 0; z < amount_to_skip - 1; z ++ ) {
-				mesh[ i - ( ( amount_to_skip - 1 - z ) ) ] = create_fill_layer( z + 1, previous_layer, current_layer, final_freq_count, layer_options );
+				mesh[ i - ( ( amount_to_skip - 1 - z ) ) ] = create_fill_layer( z + 1, previous_layer, current_layer, final_freq_count, layer_options, [  ] );
 			} 
 		}
 	}
@@ -172,15 +172,15 @@ const get_amp_bias = ( x, layer_options ) => {
 }
 
 // Creates missing rows
-const create_fill_layer = ( steps, previous_array, next_array, final_freq_count, layer_options ) => {
-	const fill_layer = new Array( final_freq_count ).fill().map( ( i, index ) => {
+const create_fill_layer = ( steps, previous_array, next_array, final_freq_count, layer_options, prefix = [] ) => {
+	const fill_layer = new Array( final_freq_count - prefix.length ).fill().map( ( i, index ) => {
 		const 	y_distance_in_points = ( next_array[ index ] - previous_array[ index ] ) * -1,
 				step_distance = y_distance_in_points / ( Math.pow( layer_options.freq_diff, ( layer_options.base_layers - 1 ) ) );
 		
 		return previous_array[ index ] - ( step_distance * steps );
 	} );
 
-	return fill_layer;
+	return [ ...prefix, ...fill_layer ];
 }
 
 // Add all layer amp values
