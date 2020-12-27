@@ -33,26 +33,26 @@
 			];
 
 	export const render_data = ( grid_data, final_freq_count, layer_options ) => {
-		const 	scene = new THREE.Scene(),
+		const 	loader = new THREE.TextureLoader(),
+				scene = new THREE.Scene(),
 				camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, .1, 1000 ),
 				renderer = new THREE.WebGLRenderer(),
-				ambient = new THREE.AmbientLight( 0xffffff, .1 ),
+				ambient = new THREE.AmbientLight( 0xffffff, .03 ),
 				directionalLight = new THREE.DirectionalLight( 0xffffff, 1 ),
 				s_geometry = new THREE.SphereGeometry( ( layer_options.radius - ( layer_options.base_amp / 2 ) ) + ( layer_options.base_amp * ( layer_options.water_level / 100 ) ), final_freq_count / 2, final_freq_count / 2 ),
-				s_material = new THREE.MeshPhongMaterial( {
+				s_material = new THREE.MeshStandardMaterial( {
 					color: 'blue',
-					opacity: .75,
+					roughness: .3,
 					transparent: true,
-					reflectivity: 1,
+					opacity: .85,
 				} ),
 				sphere = new THREE.Mesh( s_geometry, s_material );
-		
+
 		renderer.setSize( window.innerWidth, window.innerHeight );
 		document.body.appendChild( renderer.domElement );
+		camera.position.z = ambient.position.z = directionalLight.position.z = 1000; // make camera position more relative to window and readius
 
 		for ( let i = 0; i < 6; i ++ ) plot_points( grid_data[ i ][ 'data' ], final_freq_count, layer_options, i, scene )
-
-		camera.position.z = ambient.position.z = directionalLight.position.z = 1000; // make camera position more relative to window and readius
 
 		scene.add( ambient, directionalLight, sphere );
 
@@ -96,10 +96,11 @@
 			}
 		}
 
-		geometry.computeFaceNormals();
-		// geometry.computeVertexNormals();
+		// geometry.computeFaceNormals();
+		geometry.computeVertexNormals();
 
 		const terrain = new THREE.Mesh( geometry, material );
+		terrain.castShadow = true;
 
 		scene.add( terrain );
 
