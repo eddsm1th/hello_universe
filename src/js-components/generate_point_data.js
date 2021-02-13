@@ -4,15 +4,24 @@ export function generate_point_data ( layer_options, final_freq_count, sides_to_
 	for ( let layer_index = 0; layer_index < layer_options.base_layers; layer_index ++ ) {
 		const amount_to_skip = Math.pow( layer_options.freq_diff, ( layer_options.base_layers - layer_index ) - 1 );
 
-		for ( let side_index = 0; side_index < sides_to_render; side_index ++ ) {
+		for ( let side_index = 0; side_index < 2; side_index ++ ) { // build top and bottom panels ready to inject into wrapping panel
 			if ( layer_index == 0 ) sides.push( {} );
 
-			sides[ side_index ][ 'layer_' + layer_index ] = generate_mesh( layer_options, amount_to_skip, final_freq_count, layer_index );
+			sides[ side_index ][ 'layer_' + layer_index ] = generate_mesh( layer_options, amount_to_skip, final_freq_count, final_freq_count, layer_index );
+		}
+
+		const 	top_as_appendable = build_appendable_data( [ ...sides[ 0 ][ 'layer_' + layer_index ] ] ),
+				bottom_as_appendable = build_appendable_data( [ ...sides[ 1 ][ 'layer_' + layer_index ] ] ),
+				placeholder_wrapping_panel = generate_mesh( layer_options, amount_to_skip, final_freq_count, ( final_freq_count - 1 ) * 4, layer_index, top_as_appendable, bottom_as_appendable, true );
+
+		for ( let i = 0; i < 4; i ++ ) {
+			if ( layer_index == 0 ) sides.push( {} );
+
+			sides[ i + 2 ][ 'layer_' + layer_index ] = placeholder_wrapping_panel.map( inst => [ ...inst ].splice( ( final_freq_count - 1 ) * i, final_freq_count ) );
 		}
 	}
 
-	const 	step = ( ( layer_options.radius * 2 ) / ( final_freq_count - 1 ) ),
-			angle_increment = ( 90 / ( final_freq_count - 1 ) ),
+	const 	angle_increment = ( 90 / ( final_freq_count - 1 ) ),
 			side_total_point_count = ( ( final_freq_count * final_freq_count ) - 0 );
 
 	sides.forEach( ( side, side_index ) => {
@@ -29,10 +38,19 @@ export function generate_point_data ( layer_options, final_freq_count, sides_to_
 	return sides;
 }
 
+const build_appendable_data = data => {
+	const 	top = data[ 0 ],
+			right = data.map( ( row, index ) => [ 0, data.length - 1 ].indexOf( index ) == -1 ? row[ row.length - 1 ] : null ).filter( i => i ),
+			bottom = data[ data.length - 1 ].map( i => i ).reverse(),
+			left = data.map( ( row, index ) => [ 0, data.length - 1 ].indexOf( index ) == -1 ? row[ 0 ] : null ).filter( i => i ).reverse();
+
+	return [ ...top, ...right, ...bottom, ...left, ...top ];
+}
+
 const build_panel = ( object, side_index, index, sub_index, angle_increment, radius ) => {
-	object[ [ 'y', 'y', 'x', 'x', 'z', 'z' ][ side_index ] ] = radius * ( side_index % 2 == 0 ? 1 : -1 );
-	object[ [ 'x', 'x', 'z', 'z', 'y', 'y' ][ side_index ] ] = ( Math.tan( degree_in_radians( -45 + ( angle_increment * sub_index ) ) ) * radius );
-	object[ [ 'z', 'z', 'y', 'y', 'x', 'x' ][ side_index ] ] = ( Math.tan( degree_in_radians( -45 + ( angle_increment * index ) ) ) * radius );
+	object[ [ 'y', 'y', 'z', 'x', 'z', 'x' ][ side_index ] ] = radius * ( [ 1, 2, 5 ].indexOf( side_index ) != -1 ? -1 : 1 );
+	object[ [ 'x', 'x', 'x', 'z', 'x', 'z' ][ side_index ] ] = ( Math.tan( degree_in_radians( -45 + ( angle_increment * sub_index ) ) ) * radius ) * ( [ 4, 5 ].indexOf( side_index ) != -1 ? -1 : 1 );
+	object[ [ 'z', 'z', 'y', 'y', 'y', 'y' ][ side_index ] ] = ( Math.tan( degree_in_radians( -45 + ( angle_increment * index ) ) ) * radius ) * ( [ 2, 3, 4, 5 ].indexOf( side_index ) != -1 ? -1 : 1 );
 
 	return object;
 }
@@ -40,39 +58,52 @@ const build_panel = ( object, side_index, index, sub_index, angle_increment, rad
 const degree_in_radians = angle => angle * ( Math.PI / 180 );
 
 // Generate panel layer mesh
-const generate_mesh = ( layer_options, amount_to_skip, final_freq_count, layer_index ) => {
-	let mesh = new Array( final_freq_count );
+const generate_mesh = ( layer_options, amount_to_skip, row_count, column_count, layer_index, prefix_data = null, suffix_data = null, loop = false ) => {
+	let mesh = new Array( row_count );
 
-	for ( let i = 0; i < final_freq_count; i += amount_to_skip ) { // Loop through rows
-		let mesh_row = new Array( final_freq_count ).fill( 0 );
+	if ( prefix_data ) mesh[ 0 ] = prefix_data;
+	if ( suffix_data ) mesh[ mesh.length - 1 ] = suffix_data;
 
-		for ( let j = 0; j < final_freq_count; j += amount_to_skip ) { // loop through single row
-			mesh_row[ j ] = generate_point_amp( layer_options, layer_index );
+	for ( let i = 0; i < row_count; i += amount_to_skip ) { // Loop through rows
+		if ( !mesh[ i ] ) {
+			let mesh_row = new Array( column_count + ( loop ? amount_to_skip : 0 ) ).fill( 0 );
 
-			if ( j != 0 && amount_to_skip != 1 ) { // backfill skipped points in row
-				const 	previous_point = mesh_row[ j - amount_to_skip ],
-						current_point = mesh_row[ j ],
-						step = ( previous_point - current_point ) / amount_to_skip;
+			for ( let j = 0; j < column_count; j += amount_to_skip ) { // loop through single row
+				mesh_row[ j ] = generate_point_amp( layer_options, layer_index );
 
-				for ( let z = 0; z < amount_to_skip - 1; z ++ ) {
-					mesh_row[ j - ( ( amount_to_skip - 1 - z ) ) ] = ( current_point + ( step * ( amount_to_skip - 1 - z ) ) );
-				}
+				if ( j != 0 && amount_to_skip != 1 ) backfill_points( mesh_row, amount_to_skip, j ); // backfill skipped points in row
 			}
-		}
 
-		mesh[ i ] = mesh_row;
+			if ( loop ) {
+				mesh_row[ mesh_row.length - 1 ] = mesh_row[ 0 ];
+
+				backfill_points( mesh_row, amount_to_skip, mesh_row.length - 1 );
+			}
+
+			mesh[ i ] = mesh_row;
+		}
 
 		if ( i != 0 && amount_to_skip != 1 ) { // create fill layer for skipped rows
 			const 	previous_layer = mesh[ i - amount_to_skip ],
 					current_layer = mesh[ i ];
 
 			for ( let z = 0; z < amount_to_skip - 1; z ++ ) {
-				mesh[ i - ( ( amount_to_skip - 1 - z ) ) ] = create_fill_layer( z + 1, previous_layer, current_layer, final_freq_count, layer_options, [  ] );
+				mesh[ i - ( ( amount_to_skip - 1 - z ) ) ] = create_fill_layer( z + 1, previous_layer, current_layer, column_count + ( loop ? amount_to_skip : 0 ), layer_options );
 			} 
 		}
 	}
 
 	return mesh;
+}
+
+const backfill_points = ( mesh_row, amount_to_skip, anchor ) => {
+	const 	previous_point = mesh_row[ anchor - amount_to_skip ],
+			current_point = mesh_row[ anchor ],
+			step = ( previous_point - current_point ) / amount_to_skip;
+
+	for ( let z = 0; z < amount_to_skip - 1; z ++ ) {
+		mesh_row[ anchor - ( ( amount_to_skip - 1 - z ) ) ] = ( current_point + ( step * ( amount_to_skip - 1 - z ) ) );
+	}
 }
 
 // Get an amplitude base on current generation stage

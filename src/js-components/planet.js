@@ -49,8 +49,6 @@ export function create_planet ( layer_options ) {
 	grid_data = map_data_onto_sphere( grid_data, layer_options, final_freq_count );
 
 	render_data( grid_data, final_freq_count, layer_options );
-
-	console.log( grid_data );
 }
 
 const get_final_frequency_count = ( { base_freq, base_layers } ) => base_layers == 1 ? base_freq : ( base_freq * ( Math.pow( 2, base_layers ) ) / 2 - ( new Array( base_layers ).fill().map( ( i, index ) => Math.floor( Math.pow( 2, ( index - 1 ) ) ) ).reduce( ( a, b ) => a + b ) ) );

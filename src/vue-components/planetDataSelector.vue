@@ -66,7 +66,7 @@
 					{
 						'title' : 'Base_Amplitude',
 						'slug' : 'base_amp',
-						'value' : 40,
+						'value' : 100,
 						'min' : 0,
 						'max' : 200,
 						'active' : true
@@ -82,7 +82,7 @@
 					{
 						'title' : 'Amplitude_Bias',
 						'slug' : 'amp_bias',
-						'value' : 4,
+						'value' : 12,
 						'min' : -100,
 						'max' : 100,
 						'active' : true
@@ -106,7 +106,7 @@
 					{
 						'title' : 'Base_Layers',
 						'slug' : 'base_layers',
-						'value' : 3,
+						'value' : 5,
 						'min' : 1,
 						'max' : 6,
 						'active' : true
