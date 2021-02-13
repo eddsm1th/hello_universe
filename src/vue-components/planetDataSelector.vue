@@ -66,7 +66,7 @@
 					{
 						'title' : 'Base_Amplitude',
 						'slug' : 'base_amp',
-						'value' : 100,
+						'value' : 40,
 						'min' : 0,
 						'max' : 200,
 						'active' : true
@@ -90,7 +90,7 @@
 					{
 						'title' : 'Base_Frequency',
 						'slug' : 'base_freq',
-						'value' : 4,
+						'value' : 6,
 						'min' : 2,
 						'max' : 36,
 						'active' : true

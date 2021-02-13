@@ -15,37 +15,26 @@ export function generate_point_data ( layer_options, final_freq_count, sides_to_
 			angle_increment = ( 90 / ( final_freq_count - 1 ) ),
 			side_total_point_count = ( ( final_freq_count * final_freq_count ) - 0 );
 
-	// rotation_values = [
-	// 	[ 0, 0, 0 ],
-	// 	[ 1.5708 * 2, 0, 0 ],
-	// 	[ 1.5708, 0, 0 ],
-	// 	[ 0, 0, 1.5708 ],
-	// 	[ 0, 0, -1.5708 ],
-	// 	[ -1.5708, 0, 0 ],
-	// ];
-
-	let pancake_stack = true;
-
 	sides.forEach( ( side, side_index ) => {
 		side[ 'data' ] = side.layer_0.map( ( item, index ) => {
 			return item.map( ( sub_item, sub_index ) => {
-				return {
+				return build_panel( {
 					'amp_value' : get_total_amp( layer_options, side, index, sub_index ),
-					'index' : ( ( sub_index + ( index * final_freq_count ) ) + ( side_total_point_count * side_index ) ),
-
-					// rewrite this to map onto proper sphere position
-
-					'y' : pancake_stack
-							? layer_options.radius - ( ( layer_options.radius / 2.5 ) * side_index )
-							: layer_options.radius,
-					'x' : Math.tan( degree_in_radians( -45 + ( angle_increment * sub_index ) ) ) * layer_options.radius,
-					'z' : Math.tan( degree_in_radians( -45 + ( angle_increment * index ) ) ) * layer_options.radius,
-				}
+					'index' : ( ( sub_index + ( index * final_freq_count ) ) + ( side_total_point_count * side_index ) )
+				}, side_index, index, sub_index, angle_increment, layer_options.radius )
 			} );
 		} );
 	} );
 
 	return sides;
+}
+
+const build_panel = ( object, side_index, index, sub_index, angle_increment, radius ) => {
+	object[ [ 'y', 'y', 'x', 'x', 'z', 'z' ][ side_index ] ] = radius * ( side_index % 2 == 0 ? 1 : -1 );
+	object[ [ 'x', 'x', 'z', 'z', 'y', 'y' ][ side_index ] ] = ( Math.tan( degree_in_radians( -45 + ( angle_increment * sub_index ) ) ) * radius );
+	object[ [ 'z', 'z', 'y', 'y', 'x', 'x' ][ side_index ] ] = ( Math.tan( degree_in_radians( -45 + ( angle_increment * index ) ) ) * radius );
+
+	return object;
 }
 
 const degree_in_radians = angle => angle * ( Math.PI / 180 );

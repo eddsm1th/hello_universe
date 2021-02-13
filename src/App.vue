@@ -4,6 +4,7 @@
         :class="{
             'instantiated' : instantiated
         }"
+        style="opacity: 0;"
     >
 <!--         <helloUniverse
             v-if="loaded"

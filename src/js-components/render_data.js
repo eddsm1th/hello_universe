@@ -1,5 +1,5 @@
 	
-	const 	use_colours = false,
+	const 	use_colours = true,
 			colour_threshholds = [
 				{
 					'threshhold' : 90,
@@ -26,9 +26,9 @@
 	export const render_data = ( grid_data, final_freq_count, layer_options ) => {
 		const 	loader = new THREE.TextureLoader(),
 				scene = new THREE.Scene(),
-				camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, .1, 1000 ),
+				camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, .1, 10000 ),
 				renderer = new THREE.WebGLRenderer(),
-				ambient = new THREE.AmbientLight( 0xffffff, .6 ),
+				ambient = new THREE.AmbientLight( 0xffffff, .1 ),
 				directionalLight = new THREE.DirectionalLight( 0xffffff, 1 ),
 				s_geometry = new THREE.SphereGeometry( ( layer_options.radius - ( layer_options.base_amp / 2 ) ) + ( layer_options.base_amp * ( layer_options.water_level / 100 ) ), 24, 24 ),
 				s_material = new THREE.MeshStandardMaterial( {
@@ -41,7 +41,7 @@
 
 		renderer.setSize( window.innerWidth, window.innerHeight );
 		document.body.appendChild( renderer.domElement );
-		camera.position.z = ambient.position.z = directionalLight.position.z = 1000; // make camera position more relative to window and readius
+		camera.position.z = ambient.position.z = directionalLight.position.z = layer_options.radius * 2.5; // make camera position more relative to window and readius
 
 		plot_points( [ ...grid_data ], final_freq_count, layer_options, scene )
 
@@ -92,7 +92,6 @@
 		geometry.computeVertexNormals();
 
 		const terrain = new THREE.Mesh( geometry, material );
-		terrain.castShadow = true;
 
 		scene.add( terrain );
 	}

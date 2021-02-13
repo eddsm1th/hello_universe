@@ -35,7 +35,7 @@
 
 	*/
 
-import { generate_point_data } from './planet_panel_mesh_generation.js';
+import { generate_point_data } from './generate_point_data.js';
 import { render_data } from './render_data.js';
 import { map_data_onto_sphere } from './map_data_onto_sphere.js';
 
