@@ -39,6 +39,10 @@
 			planetDataOption
 		},
 
+		mounted () {
+			this.submit_planet_data()
+		},
+
 		methods: {
 			submit_planet_data () {
 				let data = {};

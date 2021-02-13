@@ -1,6 +1,6 @@
 <template>
     <main
-        class="main_"
+        class="main"
         :class="{
             'instantiated' : instantiated
         }"
@@ -88,7 +88,7 @@
                 selected_solar_system: {},
                 selected_celestial_body: {},
 
-                theme_music: ['Thanks for all the fish!','404','¯\\_(ツ)_/¯', 'CYA2TMR','EXTRA LIFE!','FATALITY','Thanks for staying!','...oops','EXECUTE ORDER 66','*SNAP*','Pulling an Alderaan...'],
+                theme_music: ['Thanks for all the fish!','404','¯\\_(ツ)_/¯', 'CYA_TMR','EXTRA LIFE!','FATALITY','Thanks for staying!','...oops','EXECUTE ORDER 66','*SNAP*','Pulling an Alderaan...','blackhole.exe','The 8th day'],
 
                 accordions: [
                     {
@@ -197,7 +197,7 @@
     .main {
         padding: 20px;
         margin: 20px;
-        position: relative;
+        position: absolute;
         width: 80%;
         // max-width: 400px;
         display: flex;

@@ -1,13 +1,5 @@
 	
 	const 	use_colours = false,
-			colours = [
-				0x00ff00, // top
-				0xff00ff, // bottom
-				0x0000ff, // front
-				0xff0000, //left
-				0xffff00, //right 
-				0x00ffff // back
-			],
 			colour_threshholds = [
 				{
 					'threshhold' : 90,
@@ -29,16 +21,8 @@
 					'threshhold' : 0,
 					'colour' : 'khaki'
 				},
-			],
-			rotation_values = [
-				[ 0, 0, 0 ],
-				[ 1.5708 * 2, 0, 0 ],
-				[ 1.5708, 0, 0 ],
-				[ 0, 0, 1.5708 ],
-				[ 0, 0, -1.5708 ],
-				[ -1.5708, 0, 0 ],
 			];
-
+			
 	export const render_data = ( grid_data, final_freq_count, layer_options ) => {
 		const 	loader = new THREE.TextureLoader(),
 				scene = new THREE.Scene(),
@@ -46,7 +30,7 @@
 				renderer = new THREE.WebGLRenderer(),
 				ambient = new THREE.AmbientLight( 0xffffff, .6 ),
 				directionalLight = new THREE.DirectionalLight( 0xffffff, 1 ),
-				s_geometry = new THREE.SphereGeometry( ( layer_options.radius - ( layer_options.base_amp / 2 ) ) + ( layer_options.base_amp * ( layer_options.water_level / 100 ) ), final_freq_count / 2, final_freq_count / 2 ),
+				s_geometry = new THREE.SphereGeometry( ( layer_options.radius - ( layer_options.base_amp / 2 ) ) + ( layer_options.base_amp * ( layer_options.water_level / 100 ) ), 24, 24 ),
 				s_material = new THREE.MeshStandardMaterial( {
 					color: 'blue',
 					roughness: .3,
@@ -59,79 +43,70 @@
 		document.body.appendChild( renderer.domElement );
 		camera.position.z = ambient.position.z = directionalLight.position.z = 1000; // make camera position more relative to window and readius
 
-		for ( let i = 0; i < 4 	; i ++ ) plot_points( grid_data[ i ][ 'data' ], final_freq_count, layer_options, i, scene )
+		plot_points( [ ...grid_data ], final_freq_count, layer_options, scene )
 
 		use_colours ? scene.add( ambient, directionalLight, sphere ) : scene.add( ambient, directionalLight );
 
 		function animate() {
 			requestAnimationFrame( animate );
 			renderer.render( scene, camera );
-		}
-		animate();
+		} animate();
 
-		apply_drag_controls( scene );
+		apply_spaceship_controls( camera );
 
 		return grid_data;
 	}
 
-	const plot_points = ( grid_data, final_freq_count, layer_options, rotation_values_index, scene ) => {
+	const plot_points = ( grid_data, final_freq_count, layer_options, scene ) => {
 		const 	geometry = new THREE.Geometry(),
 				material = ( use_colours ? new THREE.MeshLambertMaterial( {
 					vertexColors: THREE.FaceColors,
 					side: THREE.DoubleSide,
 				} ) : new THREE.MeshBasicMaterial( {
-					color: colours[ rotation_values_index ],
+					color: 0x00ff00,
 					wireframe: true,
 				} ) );
 
-		[ ...grid_data ].flat().forEach( ( item ) => geometry.vertices.push( new THREE.Vector3( item.x, item.y, item.z ) ) );
 
-		for ( let i = 1; i < grid_data.length; i ++ ) {
-			for ( let j = 0; j < grid_data[ i ].length - 1; j ++ ) {
-				const points = {
-					'oo' : grid_data[ i ][ j ],
-					'oi' : grid_data[ i - 1 ][ j ],
-					'io' : grid_data[ i ][ j + 1 ],
-					'ii' : grid_data[ i - 1 ][ j + 1 ],
-				};
+		grid_data.forEach( ( { data } ) => {
+			data.flat().forEach( item => geometry.vertices.push( new THREE.Vector3( item.x, item.y, item.z ) ) );
 
-				geometry.faces.push( new THREE.Face3( points.io.index, points.oo.index, points.ii.index ) );
-				geometry.faces[ geometry.faces.length - 1 ].color = new THREE.Color( get_colour_by_height( points.oo, points.oi, points.ii, layer_options ) );
+			for ( let i = 1; i < data.length; i ++ ) {
+				for ( let j = 0; j < data[ i ].length - 1; j ++ ) {
+					const points = {
+						'oo' : data[ i ][ j ],
+						'oi' : data[ i - 1 ][ j ],
+						'io' : data[ i ][ j + 1 ],
+						'ii' : data[ i - 1 ][ j + 1 ],
+					};
 
-				geometry.faces.push( new THREE.Face3( points.oo.index, points.oi.index, points.ii.index ) );
-				geometry.faces[ geometry.faces.length - 1 ].color = new THREE.Color( get_colour_by_height( points.oo, points.oi, points.ii, layer_options ) );	
+					geometry.faces.push( new THREE.Face3( points.io.index, points.oo.index, points.ii.index ) );
+					geometry.faces[ geometry.faces.length - 1 ].color = new THREE.Color( get_colour_by_height( points.oo, points.oi, points.ii, layer_options ) );
+
+					geometry.faces.push( new THREE.Face3( points.oo.index, points.oi.index, points.ii.index ) );
+					geometry.faces[ geometry.faces.length - 1 ].color = new THREE.Color( get_colour_by_height( points.oo, points.oi, points.ii, layer_options ) );	
+				}
 			}
-		}
+ 		} );
 
-		// geometry.computeFaceNormals();
 		geometry.computeVertexNormals();
 
 		const terrain = new THREE.Mesh( geometry, material );
 		terrain.castShadow = true;
 
 		scene.add( terrain );
-
-		apply_rotation_to_side( terrain, rotation_values_index );
-	}
-
-	// Align each side properly
-	const apply_rotation_to_side = ( terrain, i ) => {
-		const current_rotation_values = rotation_values[ i ];
-
-		terrain.rotation.x = current_rotation_values[ 0 ];	
-		terrain.rotation.y = current_rotation_values[ 1 ];
-		terrain.rotation.z = current_rotation_values[ 2 ];
 	}
 
 	// Adds rotational drag controls
-	const apply_drag_controls = ( scene ) => {
+	const apply_spaceship_controls = camera => {
 		let click_coords = {
 			'x' : null,
 			'y' : null,
 		},
-		can_drag = false;
+		can_drag = false,
+		speed = 16;
 
-		document.addEventListener( 'mousedown', ( event ) => {
+		document.addEventListener( 'mousedown', event => {
 			can_drag = true;
 
 			click_coords = {
@@ -140,18 +115,35 @@
 			};
 		} );
 
-		document.addEventListener( 'mouseup', ( event ) => can_drag = false );
+		document.addEventListener( 'mouseup', event => can_drag = false );
 
-		document.addEventListener( 'mousemove', ( event ) => {
+		document.addEventListener( 'mousemove', event => {
 			if ( can_drag ) {
-				scene.rotation.y += ( ( click_coords.x - event.clientX ) / 400 );
-				scene.rotation.x += ( ( click_coords.y - event.clientY ) / 400 );
+				camera.rotation.y += ( ( click_coords.x - event.clientX ) / 400 );
+				camera.rotation.x += ( ( click_coords.y - event.clientY ) / 400 );
 
 				click_coords = {
 					'x' : event.clientX,
 					'y' : event.clientY,
 				};
 			} 
+		} );
+
+		document.addEventListener( 'keydown', e => {
+			switch ( e.keyCode ) {
+				case 87 : // W
+					camera.translateZ( speed * -1 );
+					break;
+				case 68 : // D
+					camera.translateX( speed );
+					break;
+				case 83 : // S
+					camera.translateZ( speed );
+					break;
+				case 65 : // A
+					camera.translateX( speed * -1 );
+					break;
+			}
 		} );
 	}
 

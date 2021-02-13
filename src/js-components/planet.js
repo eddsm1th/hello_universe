@@ -43,7 +43,9 @@ import { map_data_onto_sphere } from './map_data_onto_sphere.js';
 export function create_planet ( layer_options ) {
 	const final_freq_count = get_final_frequency_count( layer_options );
 
-	let grid_data = generate_point_data( layer_options, final_freq_count, 6 );
+	let grid_data;
+
+	grid_data = generate_point_data( layer_options, final_freq_count );
 	grid_data = map_data_onto_sphere( grid_data, layer_options, final_freq_count );
 
 	render_data( grid_data, final_freq_count, layer_options );

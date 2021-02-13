@@ -1,28 +1,50 @@
-export function generate_point_data ( layer_options, final_freq_count, sides_to_render ) {
+export function generate_point_data ( layer_options, final_freq_count, sides_to_render = 6 ) {
 	let sides = [];
 
-	for ( let i = 0; i < layer_options.base_layers; i ++ ) {
-		const amount_to_skip = Math.pow( layer_options.freq_diff, ( layer_options.base_layers - ( i ) ) - 1  );
+	for ( let layer_index = 0; layer_index < layer_options.base_layers; layer_index ++ ) {
+		const amount_to_skip = Math.pow( layer_options.freq_diff, ( layer_options.base_layers - layer_index ) - 1 );
 
-		for ( let j = 0; j < sides_to_render; j ++ ) {
-			if ( i == 0 ) sides.push( {} );
+		for ( let side_index = 0; side_index < sides_to_render; side_index ++ ) {
+			if ( layer_index == 0 ) sides.push( {} );
 
-			sides[ j ][ 'layer_' + i ] = generate_mesh( layer_options, amount_to_skip, final_freq_count, i, get_injection_data( j ), sides, j );
+			sides[ side_index ][ 'layer_' + layer_index ] = generate_mesh( layer_options, amount_to_skip, final_freq_count, layer_index );
 		}
 	}
 
 	const 	step = ( ( layer_options.radius * 2 ) / ( final_freq_count - 1 ) ),
-			angle_increment = 90 / ( final_freq_count - 1 );
+			angle_increment = ( 90 / ( final_freq_count - 1 ) ),
+			side_total_point_count = ( ( final_freq_count * final_freq_count ) - 0 );
 
-	sides.forEach( ( side ) => {
+	// rotation_values = [
+	// 	[ 0, 0, 0 ],
+	// 	[ 1.5708 * 2, 0, 0 ],
+	// 	[ 1.5708, 0, 0 ],
+	// 	[ 0, 0, 1.5708 ],
+	// 	[ 0, 0, -1.5708 ],
+	// 	[ -1.5708, 0, 0 ],
+	// ];
+
+	// [
+	// 	y, x, z
+	// 	y -1, x -1, z -1,
+	// ]
+
+	let pancake_stack = true;
+
+	sides.forEach( ( side, side_index ) => {
 		side[ 'data' ] = side.layer_0.map( ( item, index ) => {
 			return item.map( ( sub_item, sub_index ) => {
 				return {
 					'amp_value' : get_total_amp( layer_options, side, index, sub_index ),
-					'y' : layer_options.radius,
+					'index' : ( ( sub_index + ( index * final_freq_count ) ) + ( side_total_point_count * side_index ) ),
+
+					// rewrite this to map onto proper sphere position
+
+					'y' : pancake_stack
+							? layer_options.radius - ( ( layer_options.radius / 2.5 ) * side_index )
+							: layer_options.radius,
 					'x' : Math.tan( degree_in_radians( -45 + ( angle_increment * sub_index ) ) ) * layer_options.radius,
 					'z' : Math.tan( degree_in_radians( -45 + ( angle_increment * index ) ) ) * layer_options.radius,
-					'index' : sub_index + ( index * final_freq_count ), 
 				}
 			} );
 		} );
@@ -33,118 +55,30 @@ export function generate_point_data ( layer_options, final_freq_count, sides_to_
 
 const degree_in_radians = angle => angle * ( Math.PI / 180 );
 
-// Get data to know how to stitch
-const get_injection_data = ( side_index ) => {
-	/*
-		where [ 1, 1 ] means the first side from the first panel
-
-		box model format: top, left, bottom, right
-	*/
-
-	switch ( side_index ) {
-		case 0 :
-		case 1 :
-			return null;
-		case 2 : // front
-			return [ [ 2, 0 ], null, [ 0, 1 ], null ];
-		case 3 : // left
-			return [ null, [ 3, 0 ], [ 3, 2, true ], [ 3, 1, true ] ];
-		case 4 : // right
-			return [ null, [ 1, 1, true ], [ 1, 2 ], [ 1, 0 ] ];
-		case 5 : // back
-			return [ [ 2, 1 ], [ 0, 4, true ], [ 0, 0 ], [ 0, 3 ] ];
-		default :
-			console.error( 'Something fucked up...' );
-	}
-}
-
-// Get entire row for stitching
-const get_spliced_data = ( data, side_index, is_negative ) => {
-	switch ( side_index ) {
-		case 0 :
-			return data[ 0 ];
-		case 1 :
-			return data.map( ( item ) => item[ item.length - 1 ] );
-		case 2 :
-			return data[ data.length - 1 ];
-		case 3 :
-			const arr = data.map( ( item ) => item[ 0 ] );
-
-			return ( is_negative ? arr.reverse() : arr );
-		default :
-			console.error( 'Something fucked up...' );
-	}
-}
-
-// Get single point for stitching
-const get_row_spliced_data = ( data, side_index, current_row_index, is_negative ) => {
-	switch ( side_index ) {
-		case 0 :
-			return data[ 0 ][ ( is_negative ? data[ 0 ].length - 1 - current_row_index : current_row_index ) ];
-		case 1 :
-			return data[ ( is_negative ? data.length - 1 - current_row_index : current_row_index ) ][ data[ 0 ].length - 1 ];
-		case 2 :
-			return data[ data.length - 1 ][ ( is_negative ? data[ 0 ].length - current_row_index : current_row_index ) ];
-		case 3 :
-			return data[ is_negative ? data.length - 1 - current_row_index : current_row_index ][ 0 ];
-		default : 
-			console.error( 'Something fucked up...' );
-	}
-}
-
 // Generate panel layer mesh
-const generate_mesh = ( layer_options, amount_to_skip, final_freq_count, layer_index, injection_data, sides, side_index ) => {
+const generate_mesh = ( layer_options, amount_to_skip, final_freq_count, layer_index ) => {
 	let mesh = new Array( final_freq_count );
 
 	for ( let i = 0; i < final_freq_count; i += amount_to_skip ) { // Loop through rows
-		if ( i == 0 && injection_data && injection_data[ 0 ] ) {
-			const cloned_panel_data = sides[ injection_data[ 0 ][ 1 ] ];
+		let mesh_row = new Array( final_freq_count ).fill( 0 );
 
-			mesh[ i ] = get_spliced_data( cloned_panel_data[ 'layer_' + layer_index ], injection_data[ 0 ][ 0 ], injection_data[ 0 ][ 2 ] );
-		} else if ( i == final_freq_count - 1 && injection_data && injection_data[ 2 ] ) {
-			const cloned_panel_data = sides[ injection_data[ 2 ][ 1 ] ];
+		for ( let j = 0; j < final_freq_count; j += amount_to_skip ) { // loop through single row
+			mesh_row[ j ] = generate_point_amp( layer_options, layer_index );
 
-			mesh[ i ] = get_spliced_data( cloned_panel_data[ 'layer_' + layer_index ], injection_data[ 2 ][ 0 ], injection_data[ 2 ][ 2 ] );
-		} else {
-			let mesh_row = new Array( final_freq_count ).fill( 0 );
+			if ( j != 0 && amount_to_skip != 1 ) { // backfill skipped points in row
+				const 	previous_point = mesh_row[ j - amount_to_skip ],
+						current_point = mesh_row[ j ],
+						step = ( previous_point - current_point ) / amount_to_skip;
 
-			for ( let j = 0; j < final_freq_count; j += amount_to_skip ) { // loop through single row
-				if ( j == 0 && injection_data && injection_data[ 3 ] ) {
-					const 	cloned_panel_data = sides[ injection_data[ 3 ][ 1 ] ],
-							cloned_amp = get_row_spliced_data( cloned_panel_data[ 'layer_' + layer_index ], injection_data[ 3 ][ 0 ], i, injection_data[ 3 ][ 2 ] );
-
-					mesh_row[ j ] = cloned_amp;
-				} else if ( j == final_freq_count - 1 && injection_data && injection_data[ 1 ] ) {
-					const 	cloned_panel_data = sides[ injection_data[ 1 ][ 1 ] ],
-							cloned_amp = get_row_spliced_data( cloned_panel_data[ 'layer_' + layer_index ], injection_data[ 1 ][ 0 ], i, injection_data[ 1 ][ 2 ] );
-
-					mesh_row[ j ] = cloned_amp;
-				} else { 
-					mesh_row[ j ] = generate_point_amp( layer_options, layer_index );
-				}
-
-				if ( j != 0 && amount_to_skip != 1 ) {
-					const 	previous_point = mesh_row[ j - amount_to_skip ],
-							current_point = mesh_row[ j ],
-							step = ( previous_point - current_point ) / amount_to_skip;
-
-					for ( let z = 0; z < amount_to_skip - 1; z ++ ) {
-						mesh_row[ j - ( ( amount_to_skip - 1 - z ) ) ] = ( current_point + ( step * ( amount_to_skip - 1 - z ) ) );
-					}
+				for ( let z = 0; z < amount_to_skip - 1; z ++ ) {
+					mesh_row[ j - ( ( amount_to_skip - 1 - z ) ) ] = ( current_point + ( step * ( amount_to_skip - 1 - z ) ) );
 				}
 			}
-
-			mesh[ i ] = mesh_row;
 		}
 
+		mesh[ i ] = mesh_row;
 
-		/*
-			- TODO // fill layer is overriding the cloned data -
-
-			> clone layer amp from adjacent side and add to first in array
-				>> i think
-		*/
-		if ( i != 0 && amount_to_skip != 1 ) {
+		if ( i != 0 && amount_to_skip != 1 ) { // create fill layer for skipped rows
 			const 	previous_layer = mesh[ i - amount_to_skip ],
 					current_layer = mesh[ i ];
 
@@ -165,6 +99,7 @@ const generate_point_amp = ( layer_options, i ) => {
 	return pre_amp;
 }
 
+// i stole this from a youtube video. it makes the amp more bias towards lower or higher values
 const get_amp_bias = ( x, layer_options ) => {
 	const k = Math.pow( 1 - layer_options.amp_bias / 100, 3 );
 
@@ -172,15 +107,13 @@ const get_amp_bias = ( x, layer_options ) => {
 }
 
 // Creates missing rows
-const create_fill_layer = ( steps, previous_array, next_array, final_freq_count, layer_options, prefix = [] ) => {
-	const fill_layer = new Array( final_freq_count - prefix.length ).fill().map( ( i, index ) => {
+const create_fill_layer = ( steps, previous_array, next_array, final_freq_count, layer_options ) => {
+	return new Array( final_freq_count ).fill().map( ( i, index ) => {
 		const 	y_distance_in_points = ( next_array[ index ] - previous_array[ index ] ) * -1,
 				step_distance = y_distance_in_points / ( Math.pow( layer_options.freq_diff, ( layer_options.base_layers - 1 ) ) );
 		
 		return previous_array[ index ] - ( step_distance * steps );
 	} );
-
-	return [ ...prefix, ...fill_layer ];
 }
 
 // Add all layer amp values
