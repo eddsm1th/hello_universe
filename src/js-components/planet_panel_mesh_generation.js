@@ -24,11 +24,6 @@ export function generate_point_data ( layer_options, final_freq_count, sides_to_
 	// 	[ -1.5708, 0, 0 ],
 	// ];
 
-	// [
-	// 	y, x, z
-	// 	y -1, x -1, z -1,
-	// ]
-
 	let pancake_stack = true;
 
 	sides.forEach( ( side, side_index ) => {

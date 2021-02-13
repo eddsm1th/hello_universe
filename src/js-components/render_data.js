@@ -119,8 +119,8 @@
 
 		document.addEventListener( 'mousemove', event => {
 			if ( can_drag ) {
-				camera.rotation.y += ( ( click_coords.x - event.clientX ) / 400 );
-				camera.rotation.x += ( ( click_coords.y - event.clientY ) / 400 );
+				camera.rotateY( ( click_coords.x - event.clientX ) / 400 );
+				camera.rotateX( ( click_coords.y - event.clientY ) / 400 );
 
 				click_coords = {
 					'x' : event.clientX,
