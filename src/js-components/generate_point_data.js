@@ -108,17 +108,10 @@ const backfill_points = ( mesh_row, amount_to_skip, anchor ) => {
 
 // Get an amplitude base on current generation stage
 const generate_point_amp = ( layer_options, i ) => {
-	const 	amp_multiplier = ( layer_options.base_amp * ( 1 / Math.pow( layer_options.amp_diff, i ) ) ),
-			pre_amp = ( layer_options.amp_bias == 0 ? Math.random() : get_amp_bias( Math.random(), layer_options ) ) * amp_multiplier - ( amp_multiplier / 2 );
+	const 	amp_multiplier = 1 / Math.pow( layer_options.amp_diff, i ),
+			pre_amp = ( ( Math.random() * amp_multiplier ) * 2 ) - amp_multiplier;
 
 	return pre_amp;
-}
-
-// i stole this from a youtube video. it makes the amp more bias towards lower or higher values
-const get_amp_bias = ( x, layer_options ) => {
-	const k = Math.pow( 1 - layer_options.amp_bias / 100, 3 );
-
-	return ( x * k ) / ( x * k - x + 1 ); 
 }
 
 // Creates missing rows

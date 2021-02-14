@@ -1,21 +1,10 @@
 	
 	const 	use_colours = true,
+			use_water = true,
 			colour_threshholds = [
 				{
-					'threshhold' : 90,
-					'colour' : 'white'
-				},
-				{
-					'threshhold' : 85,
-					'colour' : 'lightgrey'
-				},
-				{
-					'threshhold' : 75,
-					'colour' : 'saddlebrown'
-				},
-				{
-					'threshhold' : 55,
-					'colour' : 'forestgreen'
+					'threshhold' : 50,
+					'colour' : 'maroon'
 				},
 				{
 					'threshhold' : 0,
@@ -26,16 +15,16 @@
 	export const render_data = ( grid_data, final_freq_count, layer_options ) => {
 		const 	loader = new THREE.TextureLoader(),
 				scene = new THREE.Scene(),
-				camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, .1, 10000 ),
+				camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, .1, 6000 ),
 				renderer = new THREE.WebGLRenderer(),
 				sun = new THREE.HemisphereLight( 0xffffff, 0x000000, 0.2 ),
 				directionalLight = new THREE.DirectionalLight( 0xffffff, 1 ),
-				s_geometry = new THREE.SphereGeometry( ( layer_options.radius - ( layer_options.base_amp / 2 ) ) + ( layer_options.base_amp * ( layer_options.water_level / 100 ) ), 24, 24 ),
+				s_geometry = new THREE.SphereGeometry( layer_options.radius, 24, 24 ),
 				s_material = new THREE.MeshStandardMaterial( {
-					color: 'blue',
+					color: 'deeppink',
 					roughness: .3,
 					transparent: true,
-					opacity: .85,
+					opacity: .75,
 				} ),
 				sphere = new THREE.Mesh( s_geometry, s_material );
 
@@ -45,7 +34,7 @@
 
 		plot_points( grid_data, final_freq_count, layer_options, scene )
 
-		use_colours ? scene.add( sun, directionalLight, sphere ) : scene.add( sun, directionalLight );
+		use_colours && use_water ? scene.add( sun, directionalLight, sphere ) : scene.add( sun, directionalLight );
 
 		function animate() {
 			requestAnimationFrame( animate );
@@ -145,10 +134,7 @@
 
 	// Calculate the colour base on average height of all face points
 	const get_colour_by_height = ( a, b, c, layer_options ) => {
-		const 	average_height = ( ( ( a.amp_value + b.amp_value + c.amp_value ) / 3 ) ) + ( layer_options.base_amp / 2 ),
-				average_height_as_percent_max_amp = ( average_height / layer_options.base_amp ) * 100;
+		const 	average_height = ( ( a.amp_value + b.amp_value + c.amp_value ) / 3 );
 
-		for ( let i = 0; i < colour_threshholds.length; i ++ ) {
-			if ( average_height_as_percent_max_amp > colour_threshholds[ i ].threshhold || i == colour_threshholds.length - 1 ) return colour_threshholds[ i ].colour;
-		}
+		return average_height > 0 ? colour_threshholds[ 0 ].colour : colour_threshholds[ 1 ].colour;
 	}

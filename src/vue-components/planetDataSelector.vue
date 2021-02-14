@@ -22,7 +22,7 @@
 </template>
 
 <script>
-	import { create_planet } from './../js-components/planet.js';
+	import { create_celestial_body_base } from './../js-components/celestial_body_generator.js';
 	import planetDataOption from './planetDataOption.vue';
 
 	export default {
@@ -45,11 +45,12 @@
 
 		methods: {
 			submit_planet_data () {
-				let data = {};
+				let data = {}, above_data = {}, below_data = {};
 
-				this.data_options.forEach( ( item ) => data[ item.slug ] = Math.round( item.value ) );
-
-				this.grid_data = create_planet( data );
+				this.data_options.forEach( item => data[ item.slug ] = Math.round( item.value ) );
+				this.above_options.forEach( item => above_data[ item.slug ] = Math.round( item.value ) );
+				this.below_options.forEach( item => below_data[ item.slug ] = Math.round( item.value ) );
+				this.grid_data = create_celestial_body_base( [], data, above_data, below_data );
 	        }
 		},
 
@@ -64,27 +65,11 @@
 				grid_data: null,
 				data_options: [
 					{
-						'title' : 'Base_Amplitude',
-						'slug' : 'base_amp',
-						'value' : 100,
-						'min' : 0,
-						'max' : 200,
-						'active' : true
-					},
-					{
 						'title' : 'Amplitude_Layer_Division',
 						'slug' : 'amp_diff',
 						'value' : 2,
 						'min' : 1,
 						'max' : 10,
-						'active' : true
-					},
-					{
-						'title' : 'Amplitude_Bias',
-						'slug' : 'amp_bias',
-						'value' : 12,
-						'min' : -100,
-						'max' : 100,
 						'active' : true
 					},
 					{
@@ -106,17 +91,9 @@
 					{
 						'title' : 'Base_Layers',
 						'slug' : 'base_layers',
-						'value' : 5,
+						'value' : 4,
 						'min' : 1,
 						'max' : 6,
-						'active' : true
-					},
-					{
-						'title' : 'Water_Level',
-						'slug' : 'water_level',
-						'value' : 50,
-						'min' : 0,
-						'max' : 100,
 						'active' : true
 					},
 					{
@@ -127,7 +104,43 @@
 						'max' : 1000,
 						'active' : true
 					},
-				]
+				],
+				above_options: [
+					{	
+						'title' : 'Base Amplitude',
+						'slug' : 'base_amp',
+						'value' : 60,
+						'min' : 0,
+						'max' : 200,
+						'active' : true
+					},
+					{
+						'title' : 'Amplitude_Bias',
+						'slug' : 'amp_bias',
+						'value' : 0,
+						'min' : -100,
+						'max' : 100,
+						'active' : true
+					},
+				],
+				below_options: [
+					{	
+						'title' : 'Base Amplitude',
+						'slug' : 'base_amp',
+						'value' : 60,
+						'min' : 0,
+						'max' : 200,
+						'active' : true
+					},
+					{
+						'title' : 'Amplitude_Bias',
+						'slug' : 'amp_bias',
+						'value' : 0,
+						'min' : -100,
+						'max' : 100,
+						'active' : true
+					},
+				],
 			}
 		}
 	}
