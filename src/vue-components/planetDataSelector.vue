@@ -1,23 +1,70 @@
 <template>
-	<section>
-		<ul class="planet-options-list">
-			<li
-				class="data-option"
-				v-for="data_option, index in viable_data_options"
-				:key="index"
-			>
-				<planetDataOption
-					:data_option="data_option"
-				/>
-			</li>
-		</ul>
+	<section class="planet-options">
+		<div class="planet-options__list">
+			<div class="accordion">
+				<h3 class="accordion__header accordion__header--border">Base_data</h3>
+				<div class="accordion__content">
+					<ul class="planet-options__list">
+						<li
+							class="data-option"
+							v-for="data_option, index in viable_data_options"
+							:key="index"
+						>
+							<planetDataOption
+								:data_option="data_option"
+							/>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
 
-		<button
-			@click.prevent="submit_planet_data()"
-			class="accordion__cta"
-		>
-			{{ content.cta_content }}
-		</button>
+		<div class="planet-options__list--half">
+			<div class="accordion">
+				<h3 class="accordion__header accordion__header--border">above_data</h3>
+				<div class="accordion__content">
+					<ul class="planet-options__list">
+						<li
+							class="data-option"
+							v-for="data_option, index in above_options"
+							:key="index"
+						>
+							<planetDataOption
+								:data_option="data_option"
+							/>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<div class="planet-options__list--half">
+			<div class="accordion">
+				<h3 class="accordion__header accordion__header--border">below_data</h3>
+				<div class="accordion__content">
+					<ul class="planet-options__list">
+						<li
+							class="data-option"
+							v-for="data_option, index in below_options"
+							:key="index"
+						>
+							<planetDataOption
+								:data_option="data_option"
+							/>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<div>
+			<button
+				@click.prevent="submit_planet_data()"
+				class="accordion__cta"
+			>
+				{{ content.cta_content }}
+			</button>
+		</div>
 	</section>
 </template>
 
@@ -37,10 +84,6 @@
 
 		components: {
 			planetDataOption
-		},
-
-		mounted () {
-			this.submit_planet_data()
 		},
 
 		methods: {
@@ -147,7 +190,29 @@
 </script>
 
 <style lang="scss">
-	.planet-options-list {
-		list-style: none;
+	.planet-options {
+		display: flex;
+		flex-wrap: wrap;
+		margin-top: -24px;
+		margin-left: -24px;
+
+		> * {
+			padding-top: 24px;
+			padding-left: 24px;
+		}
+
+		&__list {
+			list-style: none;
+			width: 100%;
+
+			&--half {
+				width: 50%;
+			}
+		}
+
+		&__list-heading {
+			font-size: 12px;
+			margin-bottom: 16px;
+		}
 	}
 </style>

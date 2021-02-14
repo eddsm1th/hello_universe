@@ -4,9 +4,8 @@
         :class="{
             'instantiated' : instantiated
         }"
-        style="opacity: 0;"
     >
-<!--         <helloUniverse
+        <helloUniverse
             v-if="loaded"
         />
 
@@ -28,35 +27,24 @@
                     :celestial_body="selected_celestial_body"
                 />
             </div>
-        </section> -->
-
-        <accordion
-            v-for="accordion, index in accordions"
-            :key="index"
-            :content="accordion.content"
-            :child_component="accordion.child_component"
-        ></accordion>
-
-
+        </section>
     </main>
 </template>
 
 <script>
-    import accordion from './vue-components/accordion.vue';
     import helloUniverse from './vue-components/helloUniverse.vue';
     import solarSystemSelector from './vue-components/solarSystemSelector.vue';
     import solarSystemEditor from './vue-components/solarSystemEditor.vue';
-
-    // import { create_celestial_body } from './js-components/celestial_body_generator.js';
+    import celestialBodyEditor from './vue-components/celestialBodyEditor.vue';
 
     export default {
         name: 'app',
 
         components: {
-            accordion,
             helloUniverse,
             solarSystemSelector,
             solarSystemEditor,
+            celestialBodyEditor,
         },
 
         data () {
@@ -90,23 +78,6 @@
                 selected_celestial_body: {},
 
                 theme_music: ['Thanks for all the fish!','404','¯\\_(ツ)_/¯', 'CYA_TMR','EXTRA LIFE!','FATALITY','Thanks for staying!','...oops','EXECUTE ORDER 66','*SNAP*','Pulling an Alderaan...','blackhole.exe','The 8th day'],
-
-                accordions: [
-                    {
-                        'content' : {
-                            'title' : 'Planet_Data',
-                            'cta_content' : 'Generate_Planet'
-                        },
-                        'child_component' : 'planetDataSelector'
-                    },
-                    {
-                        'content' : {
-                            'title' : 'Colour_Data',
-                            'cta_content' : 'Generate_Colours'
-                        },
-                        'child_component' : 'colourDataSelector'
-                    }
-                ]
             }
         },
 
@@ -119,14 +90,10 @@
         mounted () {
             this.solar_systems = [
                 this.make_solar_system(),
-                this.make_solar_system(),
-                this.make_solar_system(),
             ];
 
             setTimeout( () => this.instantiated = true, 300 );
             setTimeout( () => this.loaded = true, 500 ); 
-
-            // this.placeholder_body = create_celestial_body();
         },
 
         methods: {
@@ -186,9 +153,9 @@
 
     body, html {
         background-color: #000;
-        // width: 100vw;
-        // height: 100vh;
-        // overflow: hidden;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
     }
 
     body {
@@ -200,11 +167,9 @@
         margin: 20px;
         position: absolute;
         width: 80%;
-        // max-width: 400px;
+        max-width: 800px;
         display: flex;
         flex-direction: column;
-        transform: rotateY(10deg);
-        transform-origin: 0 50%;
         transition: .3s width ease, .3s padding-top ease, .3s padding-bottom ease;
 
         &:not(.instantiated) {

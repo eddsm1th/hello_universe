@@ -47,8 +47,8 @@ export const create_celestial_body_base = ( grid_data, layer_options, above_opti
 	grid_data = apply_terrain_to_celestial_body( grid_data, layer_options, above_options, below_options );
 	grid_data = map_data_onto_sphere( grid_data, layer_options, final_freq_count );
 
-	console.log( 'Min Value:\t\t' + Math.min.apply( Math, [ ...grid_data ].map( i => i.data.flat() ).flat().map( i => i.amp_value ) ) );
-	console.log( 'Max Value:\t\t' + Math.max.apply( Math, [ ...grid_data ].map( i => i.data.flat() ).flat().map( i => i.amp_value ) ) );
+	// console.log( 'Min Value:\t\t' + Math.min.apply( Math, [ ...grid_data ].map( i => i.data.flat() ).flat().map( i => i.amp_value ) ) );
+	// console.log( 'Max Value:\t\t' + Math.max.apply( Math, [ ...grid_data ].map( i => i.data.flat() ).flat().map( i => i.amp_value ) ) );
 
 	render_data( grid_data, final_freq_count, layer_options );
 

@@ -4,7 +4,7 @@
 			colour_threshholds = [
 				{
 					'threshhold' : 50,
-					'colour' : 'maroon'
+					'colour' : 'forestgreen'
 				},
 				{
 					'threshhold' : 0,
@@ -21,7 +21,7 @@
 				directionalLight = new THREE.DirectionalLight( 0xffffff, 1 ),
 				s_geometry = new THREE.SphereGeometry( layer_options.radius, 24, 24 ),
 				s_material = new THREE.MeshStandardMaterial( {
-					color: 'deeppink',
+					color: 'blue',
 					roughness: .3,
 					transparent: true,
 					opacity: .75,

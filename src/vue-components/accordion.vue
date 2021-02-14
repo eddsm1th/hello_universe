@@ -73,11 +73,11 @@
 		}
 
 		&__header {
-			padding: 8px 12px;
+			padding: 12px;
 			font-size: 12px;
 
-			&:after {
-				// Arrow
+			&--border {
+				border-bottom: 1px solid #fff;
 			}
 		}
 
@@ -100,7 +100,7 @@
 		}
 
 		&__content {
-			padding: 8px 12px;
+			padding: 12px;
 			font-size: 10px;
 		}
 
@@ -108,7 +108,6 @@
 			padding: 8px 12px;
 			font-size: 10px;
 			border: 1px solid #fff;
-			margin-top: 32px;
 			color: #fff;
 			background-color: transparent;
 			border-radius: 0;
