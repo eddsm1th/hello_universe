@@ -2,17 +2,18 @@ export function generate_point_data ( layer_options, final_freq_count, sides_to_
 	let sides = [];
 
 	for ( let layer_index = 0; layer_index < layer_options.base_layers; layer_index ++ ) {
-		const amount_to_skip = Math.pow( layer_options.freq_diff, ( layer_options.base_layers - layer_index ) - 1 );
+		const 	amount_to_skip = Math.pow( layer_options.freq_diff, ( layer_options.base_layers - layer_index ) - 1 ),
+				amp_multiplier = 1 / Math.pow( layer_options.amp_diff, layer_index );
 
 		for ( let side_index = 0; side_index < 2; side_index ++ ) { // build top and bottom panels ready to inject into wrapping panel
 			if ( layer_index == 0 ) sides.push( {} );
 
-			sides[ side_index ][ 'layer_' + layer_index ] = generate_mesh( layer_options, amount_to_skip, final_freq_count, final_freq_count, layer_index );
+			sides[ side_index ][ 'layer_' + layer_index ] = generate_mesh( layer_options, amount_to_skip, final_freq_count, final_freq_count, layer_index, amp_multiplier );
 		}
 
 		const 	top_as_appendable = build_appendable_data( [ ...sides[ 0 ][ 'layer_' + layer_index ] ] ),
 				bottom_as_appendable = build_appendable_data( [ ...sides[ 1 ][ 'layer_' + layer_index ] ] ),
-				placeholder_wrapping_panel = generate_mesh( layer_options, amount_to_skip, final_freq_count, ( final_freq_count - 1 ) * 4, layer_index, top_as_appendable, bottom_as_appendable, true );
+				placeholder_wrapping_panel = generate_mesh( layer_options, amount_to_skip, final_freq_count, ( final_freq_count - 1 ) * 4, layer_index, amp_multiplier, top_as_appendable, bottom_as_appendable, true );
 
 		for ( let i = 0; i < 4; i ++ ) {
 			if ( layer_index == 0 ) sides.push( {} );
@@ -58,7 +59,7 @@ const build_panel = ( object, side_index, index, sub_index, angle_increment, rad
 const degree_in_radians = angle => angle * ( Math.PI / 180 );
 
 // Generate panel layer mesh
-const generate_mesh = ( layer_options, amount_to_skip, row_count, column_count, layer_index, prefix_data = null, suffix_data = null, loop = false ) => {
+const generate_mesh = ( layer_options, amount_to_skip, row_count, column_count, layer_index, amp_multiplier, prefix_data = null, suffix_data = null, loop = false ) => {
 	let mesh = new Array( row_count );
 
 	if ( prefix_data ) mesh[ 0 ] = prefix_data;
@@ -69,7 +70,7 @@ const generate_mesh = ( layer_options, amount_to_skip, row_count, column_count, 
 			let mesh_row = new Array( column_count + ( loop ? amount_to_skip : 0 ) ).fill( 0 );
 
 			for ( let j = 0; j < column_count; j += amount_to_skip ) { // loop through single row
-				mesh_row[ j ] = generate_point_amp( layer_options, layer_index );
+				mesh_row[ j ] = generate_point_amp( layer_options, amp_multiplier );
 
 				if ( j != 0 && amount_to_skip != 1 ) backfill_points( mesh_row, amount_to_skip, j ); // backfill skipped points in row
 			}
@@ -107,12 +108,7 @@ const backfill_points = ( mesh_row, amount_to_skip, anchor ) => {
 }
 
 // Get an amplitude base on current generation stage
-const generate_point_amp = ( layer_options, i ) => {
-	const 	amp_multiplier = 1 / Math.pow( layer_options.amp_diff, i ),
-			pre_amp = ( ( Math.random() * amp_multiplier ) * 2 ) - amp_multiplier;
-
-	return pre_amp;
-}
+const generate_point_amp = ( layer_options, amp_multiplier ) => ( ( ( Math.random() * amp_multiplier ) * 2 ) - amp_multiplier )	;
 
 // Creates missing rows
 const create_fill_layer = ( steps, previous_array, next_array, final_freq_count, layer_options ) => {
