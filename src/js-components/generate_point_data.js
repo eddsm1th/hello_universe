@@ -27,11 +27,13 @@ export function generate_point_data ( layer_options, final_freq_count, sides_to_
 
 	sides.forEach( ( side, side_index ) => {
 		side[ 'data' ] = side.layer_0.map( ( item, index ) => {
+			const tert_coord_position = ( Math.tan( degree_in_radians( -45 + ( angle_increment * index ) ) ) * layer_options.radius );
+
 			return item.map( ( sub_item, sub_index ) => {
 				return build_panel( {
 					'amp_value' : get_total_amp( layer_options, side, index, sub_index ),
 					'index' : ( ( sub_index + ( index * final_freq_count ) ) + ( side_total_point_count * side_index ) )
-				}, side_index, index, sub_index, angle_increment, layer_options.radius )
+				}, side_index, tert_coord_position, sub_index, angle_increment, layer_options.radius )
 			} );
 		} );
 	} );
@@ -48,10 +50,10 @@ const build_appendable_data = data => {
 	return [ ...top, ...right, ...bottom, ...left, ...top ];
 }
 
-const build_panel = ( object, side_index, index, sub_index, angle_increment, radius ) => {
+const build_panel = ( object, side_index, tert_coord_position, sub_index, angle_increment, radius ) => {
 	object[ [ 'y', 'y', 'z', 'x', 'z', 'x' ][ side_index ] ] = radius * ( [ 1, 2, 5 ].indexOf( side_index ) != -1 ? -1 : 1 );
 	object[ [ 'x', 'x', 'x', 'z', 'x', 'z' ][ side_index ] ] = ( Math.tan( degree_in_radians( -45 + ( angle_increment * sub_index ) ) ) * radius ) * ( [ 4, 5 ].indexOf( side_index ) != -1 ? -1 : 1 );
-	object[ [ 'z', 'z', 'y', 'y', 'y', 'y' ][ side_index ] ] = ( Math.tan( degree_in_radians( -45 + ( angle_increment * index ) ) ) * radius ) * ( [ 2, 3, 4, 5 ].indexOf( side_index ) != -1 ? -1 : 1 );
+	object[ [ 'z', 'z', 'y', 'y', 'y', 'y' ][ side_index ] ] = tert_coord_position * ( [ 2, 3, 4, 5 ].indexOf( side_index ) != -1 ? -1 : 1 );
 
 	return object;
 }
@@ -108,7 +110,7 @@ const backfill_points = ( mesh_row, amount_to_skip, anchor ) => {
 }
 
 // Get an amplitude base on current generation stage
-const generate_point_amp = ( layer_options, amp_multiplier ) => ( ( ( Math.random() * amp_multiplier ) * 2 ) - amp_multiplier )	;
+const generate_point_amp = ( layer_options, amp_multiplier ) => ( ( ( Math.random() * amp_multiplier ) * 2 ) - amp_multiplier );
 
 // Creates missing rows
 const create_fill_layer = ( steps, previous_array, next_array, final_freq_count, layer_options ) => {
