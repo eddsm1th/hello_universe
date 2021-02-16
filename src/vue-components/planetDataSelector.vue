@@ -86,6 +86,10 @@
 			planetDataOption
 		},
 
+		mounted () {
+			this.submit_planet_data();
+		},
+
 		methods: {
 			submit_planet_data () {
 				let data = {}, above_data = {}, below_data = {};
@@ -110,7 +114,7 @@
 					{
 						'title' : 'Amplitude_Layer_Division',
 						'slug' : 'amp_diff',
-						'value' : 3,
+						'value' : 4,
 						'min' : 1,
 						'max' : 10,
 						'active' : true
@@ -118,7 +122,7 @@
 					{
 						'title' : 'Base_Frequency',
 						'slug' : 'base_freq',
-						'value' : 10,
+						'value' : 8,
 						'min' : 2,
 						'max' : 36,
 						'active' : true
@@ -126,15 +130,15 @@
 					{
 						'title' : 'Frequency_Multiplier',
 						'slug' : 'freq_diff',
-						'value' : 2,
+						'value' : 3,
 						'min' : 2,
-						'max' : 2,
-						'active' : false
+						'max' : 6,
+						'active' : true
 					},
 					{
 						'title' : 'Base_Layers',
 						'slug' : 'base_layers',
-						'value' : 4,
+						'value' : 3,
 						'min' : 1,
 						'max' : 6,
 						'active' : true
@@ -152,7 +156,7 @@
 					{	
 						'title' : 'Base Amplitude',
 						'slug' : 'base_amp',
-						'value' : 109,
+						'value' : 100,
 						'min' : 0,
 						'max' : 200,
 						'active' : true
@@ -160,7 +164,7 @@
 					{
 						'title' : 'Amplitude_Bias',
 						'slug' : 'amp_bias',
-						'value' : 18,
+						'value' : 20,
 						'min' : -100,
 						'max' : 100,
 						'active' : true
@@ -170,7 +174,7 @@
 					{	
 						'title' : 'Base Amplitude',
 						'slug' : 'base_amp',
-						'value' : 118,
+						'value' : 60,
 						'min' : 0,
 						'max' : 200,
 						'active' : true

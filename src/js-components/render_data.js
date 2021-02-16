@@ -10,9 +10,13 @@
 					'threshhold' : 0,
 					'colour' : 'khaki'
 				},
-			];
+			],
+			base_colour = 'saddlebrown',
+			flat_colour = 'green',
+			flat_colour_height_cutoff = .25,
+			flat_colour_angle_cutoff = 0;
 			
-	export const render_data = ( grid_data, final_freq_count, layer_options ) => {
+	export const render_data = ( grid_data, final_freq_count, layer_options, above_options ) => {
 		const 	loader = new THREE.TextureLoader(),
 				scene = new THREE.Scene(),
 				camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, .1, 6000 ),
@@ -32,7 +36,7 @@
 		document.body.appendChild( renderer.domElement );
 		camera.position.z = sun.position.z = directionalLight.position.z = layer_options.radius * 2; // make camera position more relative to window and readius
 
-		plot_points( grid_data, final_freq_count, layer_options, scene )
+		plot_points( grid_data, final_freq_count, layer_options, scene, above_options )
 
 		use_colours && use_water ? scene.add( sun, directionalLight, sphere ) : scene.add( sun, directionalLight );
 
@@ -46,7 +50,7 @@
 		return grid_data;
 	}
 
-	const plot_points = ( grid_data, final_freq_count, layer_options, scene ) => {
+	const plot_points = ( grid_data, final_freq_count, layer_options, scene, above_options ) => {
 		const 	geometry = new THREE.Geometry(),
 				material = ( use_colours ? new THREE.MeshLambertMaterial( {
 					vertexColors: THREE.FaceColors,
@@ -54,7 +58,8 @@
 				} ) : new THREE.MeshBasicMaterial( {
 					color: 0x00ff00,
 					wireframe: true,
-				} ) );
+				} ) ),
+				flat_colour_cutoff_value = above_options.base_amp * flat_colour_height_cutoff;
 
 
 		grid_data.forEach( ( { data } ) => {
@@ -70,10 +75,10 @@
 					};
 
 					geometry.faces.push( new THREE.Face3( points.ii.index, points.io.index, points.oo.index ) );
-					geometry.faces[ geometry.faces.length - 1 ].color = new THREE.Color( get_colour_by_height( points.oo, points.oi, points.ii, layer_options ) );
+					geometry.faces[ geometry.faces.length - 1 ].color = new THREE.Color( get_colour_by_height( points.oo, points.io, points.ii, flat_colour_cutoff_value ) );
 
 					geometry.faces.push( new THREE.Face3( points.ii.index, points.oo.index, points.oi.index ) );
-					geometry.faces[ geometry.faces.length - 1 ].color = new THREE.Color( get_colour_by_height( points.oo, points.oi, points.ii, layer_options ) );	
+					geometry.faces[ geometry.faces.length - 1 ].color = new THREE.Color( get_colour_by_height( points.oo, points.oi, points.ii, flat_colour_cutoff_value ) );	
 				}
 			}
  		} );
@@ -133,8 +138,17 @@
 	}
 
 	// Calculate the colour base on average height of all face points
-	const get_colour_by_height = ( a, b, c, layer_options ) => {
+	const get_colour_by_height = ( a, b, c, flat_colour_cutoff_value ) => {
 		const 	average_height = ( ( a.amp_value + b.amp_value + c.amp_value ) / 3 );
 
-		return average_height > 0 ? colour_threshholds[ 0 ].colour : colour_threshholds[ 1 ].colour;
+		if ( average_height < 0 || average_height > flat_colour_cutoff_value ) {
+			return base_colour;
+		} else {
+			const height_diff = Math.max.apply( Math, [ a.amp_value, b.amp_value, c.amp_value ] ) - Math.min.apply( Math, [ a.amp_value, b.amp_value, c.amp_value ] );
+
+			return height_diff > 10 ? base_colour : flat_colour;
+		}
+		// const 	average_height = ( ( a.amp_value + b.amp_value + c.amp_value ) / 3 );
+
+		// return average_height > 0 ? colour_threshholds[ 0 ].colour : colour_threshholds[ 1 ].colour;
 	}

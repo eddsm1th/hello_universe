@@ -50,7 +50,7 @@ export const create_celestial_body_base = ( grid_data, layer_options, above_opti
 	// console.log( 'Min Value:\t\t' + Math.min.apply( Math, [ ...grid_data ].map( i => i.data.flat() ).flat().map( i => i.amp_value ) ) );
 	// console.log( 'Max Value:\t\t' + Math.max.apply( Math, [ ...grid_data ].map( i => i.data.flat() ).flat().map( i => i.amp_value ) ) );
 
-	render_data( grid_data, final_freq_count, layer_options );
+	render_data( grid_data, final_freq_count, layer_options, above_options );
 
 	return grid_data;
 }
@@ -80,4 +80,16 @@ const get_amp_bias = ( x, amp_bias, polarity ) => {
 	return ( x * k ) / ( x * k - x + 1 ) * polarity; 
 }
 
-const get_final_frequency_count = ( { base_freq, base_layers } ) => base_layers == 1 ? base_freq : ( base_freq * ( Math.pow( 2, base_layers ) ) / 2 - ( new Array( base_layers ).fill().map( ( i, index ) => Math.floor( Math.pow( 2, ( index - 1 ) ) ) ).reduce( ( a, b ) => a + b ) ) );
+const get_final_frequency_count = ( { base_freq, base_layers, freq_diff } ) => {
+	let base = base_freq,
+		base_gap = ( ( base_freq - 1 ) * ( freq_diff - 1 ) );
+
+	for ( let i = 0; i < base_layers - 1; i ++ ) {
+		base += base_gap;
+
+		base_gap *= freq_diff;
+	}
+
+	return base;
+}
+

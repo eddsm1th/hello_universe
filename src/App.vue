@@ -4,6 +4,7 @@
         :class="{
             'instantiated' : instantiated
         }"
+        style="opacity: 0; "
     >
         <helloUniverse
             v-if="loaded"
@@ -61,7 +62,7 @@
                 states: [
                     {
                         'name' : 'solarSystemSelector',
-                        'active' : true
+                        'active' : false
                     },
                     {
                         'name' : 'solarSystemEditor',
@@ -69,7 +70,7 @@
                     },
                     {
                         'name' : 'celestialBodyEditor',
-                        'active' : false
+                        'active' : true
                     },
                 ],
 
@@ -155,7 +156,7 @@
         background-color: #000;
         width: 100vw;
         height: 100vh;
-        overflow: hidden;
+        // overflow: hidden;
     }
 
     body {
