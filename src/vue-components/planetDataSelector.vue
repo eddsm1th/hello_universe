@@ -128,7 +128,7 @@
 						'active' : true
 					},
 					{
-						'title' : 'Frequency_Multiplier',
+						'title' : 'Frequency_Division',
 						'slug' : 'freq_diff',
 						'value' : 3,
 						'min' : 2,
