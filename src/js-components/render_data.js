@@ -1,7 +1,7 @@
 	
 	const 	use_colours = true,
 			use_water = true,
-			use_earth = false,
+			use_earth = true,
 
 			base_colour = 'maroon',
 			flat_colour = 'deeppink',
