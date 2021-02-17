@@ -8,6 +8,7 @@
 			quadrant_row.forEach( ( quadrant_row_index, sub_index ) => {
 				const 	xz_length_to_center = ( quadrant_row_index.x * quadrant_row_index.x ) + ( quadrant_row_index.z * quadrant_row_index.z ),
 						xzy_length_to_center = Math.sqrt( ( quadrant_row_index.y * quadrant_row_index.y ) + xz_length_to_center ),
+						coords_multiplier = layer_options.radius / xzy_length_to_center,
 						mirrored_column_index = final_freq_count - 1 - sub_index,
 						mirrored_row_index = final_freq_count - 1 - index;
 
@@ -21,11 +22,15 @@
 						data[ mirrored_row_index ][ mirrored_column_index ],
 					].forEach( inst => {
 						if ( !inst.c2s_mapped ) {
-							const coords_multiplier = layer_options.radius / ( xzy_length_to_center - inst.amp_value );
+							const amplified_coords_multiplier = layer_options.radius / ( xzy_length_to_center - inst.amp_value );
 
-							inst.y *= coords_multiplier;
-							inst.x *= coords_multiplier; 
-							inst.z *= coords_multiplier; 
+							inst[ 'base_x' ] = inst.x * coords_multiplier;
+							inst[ 'base_y' ] = inst.y * coords_multiplier;
+							inst[ 'base_z' ] = inst.z * coords_multiplier;
+
+							inst.x *= amplified_coords_multiplier; 
+							inst.y *= amplified_coords_multiplier;
+							inst.z *= amplified_coords_multiplier;
 
 							inst[ 'c2s_mapped' ] = true;
 						}

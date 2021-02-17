@@ -182,7 +182,7 @@
 					{
 						'title' : 'Amplitude_Bias',
 						'slug' : 'amp_bias',
-						'value' : -84,
+						'value' : 0,
 						'min' : -100,
 						'max' : 100,
 						'active' : true
