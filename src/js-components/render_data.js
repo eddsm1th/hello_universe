@@ -1,7 +1,7 @@
 	
 	const 	use_colours = true,
 			use_water = true,
-			use_earth = true,
+			use_earth = false,
 
 			base_colour = 'maroon',
 			flat_colour = 'deeppink',
@@ -11,8 +11,6 @@
 			water_shallow_colour = parseInt( 0x00FFF0 ),
 			water_deep_colour = parseInt( 0x000D61 ),
 			water_colour_range = water_shallow_colour - water_deep_colour;
-
-	let depths = [];
 			
 	export const render_data = ( grid_data, final_freq_count, layer_options, above_options, below_options ) => {
 		const 	loader = new THREE.TextureLoader(),
@@ -89,8 +87,6 @@
 		if ( use_water ) {
 			water_geometry.computeVertexNormals();
 			scene.add( new THREE.Mesh( water_geometry, water_material ) );
-
-			console.log( Math.max.apply( Math, depths ) );
 		}
 	}
 
@@ -104,7 +100,7 @@
 	}
 
 	const add_face_to_goemetry = ( a, b, c, flat_colour_cutoff_value, geometry, water_geometry, below_options ) => {
-		if ( use_earth ) {
+		if ( use_earth && ( a.amp_value > 0 || b.amp_value > 0 || c.amp_value > 0 ) ) {
 			geometry.faces.push( new THREE.Face3( a.index, b.index, c.index ) );
 			geometry.faces[ geometry.faces.length - 1 ].color = new THREE.Color( get_colour_by_height( c, b, a, flat_colour_cutoff_value ) );
 		}
