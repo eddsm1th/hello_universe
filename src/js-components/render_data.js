@@ -3,14 +3,13 @@
 			use_water = true,
 			use_earth = true,
 
-			base_colour = 'maroon',
-			flat_colour = 'deeppink',
+			base_colour = 'saddlebrown',
+			flat_colour = 'forestgreen',
 			flat_colour_height_cutoff = .25,
 			flat_colour_angle_cutoff = 0,
 
-			water_shallow_colour = parseInt( 0x00FFF0 ),
-			water_deep_colour = parseInt( 0x000D61 ),
-			water_colour_range = water_shallow_colour - water_deep_colour;
+			water_shallow_colour = [ 0, 221, 255 ],
+			water_deep_colour = [ 210, 14, 15 ];
 			
 	export const render_data = ( grid_data, final_freq_count, layer_options, above_options, below_options ) => {
 		const 	loader = new THREE.TextureLoader(),
@@ -90,17 +89,18 @@
 		}
 	}
 
-	const get_water_colour_by_depth = depth => intToRGB( parseInt( water_shallow_colour - ( water_colour_range * depth ) ) );
+	const get_water_colour_by_depth = depth => {
+		const new_values = [];
 
-	// collaborated with stack overflow for this one
-	const intToRGB = i => {
-	    var c = ( i & 0x00FFFFFF ).toString(16).toUpperCase();
+		for ( let i = 0; i < 3; i ++ ) {
+			new_values.push( parseInt( water_shallow_colour[ i ] - ( ( water_shallow_colour[ i ] - water_deep_colour[ i ] ) * depth ) ) );
+		}
 
-	    return "00000".substring(0, 6 - c.length) + c;
-	}
+		return 'rgb( ' + new_values.join() + ' )';
+	};
 
 	const add_face_to_goemetry = ( a, b, c, flat_colour_cutoff_value, geometry, water_geometry, below_options ) => {
-		if ( use_earth && ( a.amp_value > 0 || b.amp_value > 0 || c.amp_value > 0 ) ) {
+		if ( use_earth ) {
 			geometry.faces.push( new THREE.Face3( a.index, b.index, c.index ) );
 			geometry.faces[ geometry.faces.length - 1 ].color = new THREE.Color( get_colour_by_height( c, b, a, flat_colour_cutoff_value ) );
 		}
@@ -110,7 +110,20 @@
 					depth = parseFloat( ( min_val / ( below_options.base_amp * -1 ) ).toFixed( 2 ) );
 
 			water_geometry.faces.push( new THREE.Face3( a.index, b.index, c.index ) );
-			water_geometry.faces[ water_geometry.faces.length - 1 ].color = new THREE.Color( '#' + get_water_colour_by_depth( depth ) );
+			water_geometry.faces[ water_geometry.faces.length - 1 ].color = new THREE.Color( get_water_colour_by_depth( depth ) );
+		}
+	}
+
+	// Calculate the colour base on average height of all face points
+	const get_colour_by_height = ( a, b, c, flat_colour_cutoff_value ) => {
+		const 	average_height = ( ( a.amp_value + b.amp_value + c.amp_value ) / 3 );
+
+		if ( average_height < 0 || average_height > flat_colour_cutoff_value ) {
+			return base_colour;
+		} else {
+			const height_diff = Math.max.apply( Math, [ a.amp_value, b.amp_value, c.amp_value ] ) - Math.min.apply( Math, [ a.amp_value, b.amp_value, c.amp_value ] );
+
+			return height_diff > 10 ? base_colour : flat_colour;
 		}
 	}
 
@@ -162,17 +175,4 @@
 					break;
 			}
 		} );
-	}
-
-	// Calculate the colour base on average height of all face points
-	const get_colour_by_height = ( a, b, c, flat_colour_cutoff_value ) => {
-		const 	average_height = ( ( a.amp_value + b.amp_value + c.amp_value ) / 3 );
-
-		if ( average_height < 0 || average_height > flat_colour_cutoff_value ) {
-			return base_colour;
-		} else {
-			const height_diff = Math.max.apply( Math, [ a.amp_value, b.amp_value, c.amp_value ] ) - Math.min.apply( Math, [ a.amp_value, b.amp_value, c.amp_value ] );
-
-			return height_diff > 10 ? base_colour : flat_colour;
-		}
 	}
