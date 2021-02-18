@@ -1,20 +1,21 @@
 	
-	const 	use_colours = true,
+	const 	wireframe = false,
+
 			use_water = true,
 			use_earth = true,
 
-			base_colour = 'saddlebrown',
-			flat_colour = 'forestgreen',
+			base_colour = 'lightskyblue',
+			flat_colour = 'white',
 			flat_colour_height_cutoff = .25,
 			flat_colour_angle_cutoff = 0,
 
-			water_shallow_colour = [ 0, 221, 255 ],
-			water_deep_colour = [ 210, 14, 15 ];
+			water_shallow_colour = [ 0, 255, 255 ],
+			water_deep_colour = [ 0, 80, 255 ];
 			
 	export const render_data = ( grid_data, final_freq_count, layer_options, above_options, below_options ) => {
 		const 	loader = new THREE.TextureLoader(),
 				scene = new THREE.Scene(),
-				camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, .1, 6000 ),
+				camera = new THREE.PerspectiveCamera( 80, window.innerWidth / window.innerHeight, .1, 6000 ),
 				renderer = new THREE.WebGLRenderer(),
 				sun = new THREE.HemisphereLight( 0xffffff, 0x000000, 0.2 ),
 				directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
@@ -39,7 +40,7 @@
 
 	const plot_points = ( grid_data, final_freq_count, layer_options, scene, above_options, below_options ) => {
 		const 	geometry = new THREE.Geometry(),
-				material = ( use_colours ? new THREE.MeshLambertMaterial( {
+				material = ( !wireframe ? new THREE.MeshLambertMaterial( {
 					vertexColors: THREE.FaceColors,
 					side: THREE.DoubleSide,
 				} ) : new THREE.MeshBasicMaterial( {
@@ -47,13 +48,16 @@
 					wireframe: true,
 				} ) ),
 				water_geometry = new THREE.Geometry(),
-				water_material = new THREE.MeshStandardMaterial( {
+				water_material = ( !wireframe ? new THREE.MeshStandardMaterial( {
 					vertexColors: THREE.FaceColors,
 					roughness: .3,
 					transparent: true,
-					opacity: 1,
+					opacity: .8,
 					side: THREE.DoubleSide,
-				} ),
+				} ) : new THREE.MeshBasicMaterial( {
+					color: 0xff0000,
+					wireframe: true,
+				} ) ),
 				flat_colour_cutoff_value = above_options.base_amp * flat_colour_height_cutoff;
 
 
@@ -84,7 +88,7 @@
 		}
 
 		if ( use_water ) {
-			water_geometry.computeVertexNormals();
+			water_geometry.computeFaceNormals();
 			scene.add( new THREE.Mesh( water_geometry, water_material ) );
 		}
 	}

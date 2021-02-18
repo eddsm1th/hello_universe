@@ -164,7 +164,7 @@
 					{
 						'title' : 'Amplitude_Bias',
 						'slug' : 'amp_bias',
-						'value' : 20,
+						'value' : 25,
 						'min' : -100,
 						'max' : 100,
 						'active' : true
@@ -174,7 +174,7 @@
 					{	
 						'title' : 'Base Amplitude',
 						'slug' : 'base_amp',
-						'value' : 60,
+						'value' : 80,
 						'min' : 0,
 						'max' : 200,
 						'active' : true
@@ -182,7 +182,7 @@
 					{
 						'title' : 'Amplitude_Bias',
 						'slug' : 'amp_bias',
-						'value' : -40,
+						'value' : -70,
 						'min' : -100,
 						'max' : 100,
 						'active' : true
