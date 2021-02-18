@@ -114,7 +114,7 @@
 					{
 						'title' : 'Amplitude_Layer_Division',
 						'slug' : 'amp_diff',
-						'value' : 4,
+						'value' : 6,
 						'min' : 1,
 						'max' : 10,
 						'active' : true
@@ -164,7 +164,7 @@
 					{
 						'title' : 'Amplitude_Bias',
 						'slug' : 'amp_bias',
-						'value' : 25,
+						'value' : 12,
 						'min' : -100,
 						'max' : 100,
 						'active' : true
@@ -182,7 +182,7 @@
 					{
 						'title' : 'Amplitude_Bias',
 						'slug' : 'amp_bias',
-						'value' : -70,
+						'value' : -50,
 						'min' : -100,
 						'max' : 100,
 						'active' : true
