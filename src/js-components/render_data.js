@@ -4,11 +4,11 @@
 			use_water = true,
 			use_earth = true,
 
-			low_alt_colour = [ 255, 255, 255 ],
-			high_alt_colour = [ 130, 255, 210 ],
+			low_alt_colour = [ Math.random()*255, Math.random()*255, Math.random()*255 ],
+			high_alt_colour = [ Math.random()*255, Math.random()*255, Math.random()*255 ],
 
-			water_shallow_colour = [ 0, 255, 255 ],
-			water_deep_colour = [ 0, 80, 255 ];
+			water_shallow_colour = [ Math.random()*255, Math.random()*255, Math.random()*255 ],
+			water_deep_colour = [ Math.random()*255, Math.random()*255, Math.random()*255 ];
 			
 	export const render_data = ( grid_data, final_freq_count, layer_options, above_options, below_options ) => {
 		const 	loader = new THREE.TextureLoader(),
