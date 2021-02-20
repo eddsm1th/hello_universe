@@ -103,7 +103,7 @@
 
 		computed: {
 			viable_data_options () {
-				return this.data_options.filter( ( item ) => item.active );
+				return this.data_options.filter( item => item.active );
 			}
 		},
 
@@ -114,7 +114,7 @@
 					{
 						'title' : 'Amplitude_Layer_Division',
 						'slug' : 'amp_diff',
-						'value' : 6,
+						'value' : 4,
 						'min' : 1,
 						'max' : 10,
 						'active' : true
@@ -122,13 +122,13 @@
 					{
 						'title' : 'Base_Frequency',
 						'slug' : 'base_freq',
-						'value' : 8,
+						'value' : 6,
 						'min' : 2,
 						'max' : 36,
 						'active' : true
 					},
 					{
-						'title' : 'Frequency_Division',
+						'title' : 'Frequency_Layer_Multiplication',
 						'slug' : 'freq_diff',
 						'value' : 3,
 						'min' : 2,
@@ -136,7 +136,7 @@
 						'active' : true
 					},
 					{
-						'title' : 'Base_Layers',
+						'title' : 'Layers',
 						'slug' : 'base_layers',
 						'value' : 3,
 						'min' : 1,
@@ -144,7 +144,7 @@
 						'active' : true
 					},
 					{
-						'title' : 'Planet_Radius',
+						'title' : 'Radius',
 						'slug' : 'radius',
 						'value' : 600,
 						'min' : 100,
@@ -164,7 +164,7 @@
 					{
 						'title' : 'Amplitude_Bias',
 						'slug' : 'amp_bias',
-						'value' : 12,
+						'value' : 0,
 						'min' : -100,
 						'max' : 100,
 						'active' : true

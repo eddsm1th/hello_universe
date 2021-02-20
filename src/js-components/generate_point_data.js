@@ -14,7 +14,9 @@ export function generate_point_data ( layer_options, final_freq_count, sides_to_
 
 		const 	top_as_appendable = build_appendable_data( [ ...sides[ 0 ][ 'layer_' + layer_index ] ] ),
 				bottom_as_appendable = build_appendable_data( [ ...sides[ 1 ][ 'layer_' + layer_index ] ] ),
-				placeholder_wrapping_panel = generate_mesh( layer_options, amount_to_skip, final_freq_count, ( final_freq_count - 1 ) * 4, layer_index, amp_multiplier, step_distance_multiplier, top_as_appendable, bottom_as_appendable, true );
+
+				// this isnt looping properly
+				placeholder_wrapping_panel = generate_mesh( layer_options, amount_to_skip, final_freq_count, top_as_appendable.length, layer_index, amp_multiplier, step_distance_multiplier, top_as_appendable, bottom_as_appendable, true );
 
 		for ( let i = 0; i < 4; i ++ ) {
 			if ( layer_index == 0 ) sides.push( {} );
@@ -48,7 +50,7 @@ const build_appendable_data = data => {
 			bottom = data[ data.length - 1 ].map( i => i ).reverse(),
 			left = data.map( ( row, index ) => [ 0, data.length - 1 ].indexOf( index ) == -1 ? row[ 0 ] : null ).filter( i => i ).reverse();
 
-	return [ ...top, ...right, ...bottom, ...left, ...top ];
+	return [ ...top, ...right, ...bottom, ...left ];
 }
 
 const build_panel = ( object, side_index, tert_coord_position, sub_index, angle_increment, radius ) => {
@@ -70,7 +72,7 @@ const generate_mesh = ( layer_options, amount_to_skip, row_count, column_count, 
 
 	for ( let i = 0; i < row_count; i += amount_to_skip ) { // Loop through rows
 		if ( !mesh[ i ] ) {
-			let mesh_row = new Array( column_count + ( loop ? amount_to_skip : 0 ) ).fill( 0 );
+			let mesh_row = new Array( column_count ).fill( 0 );
 
 			for ( let j = 0; j < column_count; j += amount_to_skip ) { // loop through single row
 				mesh_row[ j ] = generate_point_amp( amp_multiplier );

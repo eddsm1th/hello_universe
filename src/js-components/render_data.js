@@ -4,11 +4,69 @@
 			use_water = true,
 			use_earth = true,
 
-			low_alt_colour = [ Math.random()*255, Math.random()*255, Math.random()*255 ],
-			high_alt_colour = [ Math.random()*255, Math.random()*255, Math.random()*255 ],
+			terrain_colours = [
+				{
+					'rgb' : [ 255, 255, 123 ],
+					'threshold' : 0,
+				},
+				{
+					'rgb' : [ 0, 204, 0 ],
+					'threshold' : .15,
+				},
+				{
+					'rgb' : [ 0, 102, 0 ],
+					'threshold' : .3,
+				},
+				{
+					'rgb' : [ 153, 76, 0 ],
+					'threshold' : .6,
+				},
+				{
+					'rgb' : [ 102, 51, 0 ],
+					'threshold' : 1,
+				}
+			],
+			water_colours = [
+				{
+					'rgb' : [ 0, 255, 255 ],
+					'threshold' : 0,
+				},
+				{
+					'rgb' : [ 0, 0, 150 ],
+					'threshold' : 1,
+				}
+			];
 
-			water_shallow_colour = [ Math.random()*255, Math.random()*255, Math.random()*255 ],
-			water_deep_colour = [ Math.random()*255, Math.random()*255, Math.random()*255 ];
+			/* Random Colours
+				// terrain_colours = [
+				// 	{
+				// 		'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
+				// 		'threshold' : 0,
+				// 	},
+				// 	{
+				// 		'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
+				// 		'threshold' : .15,
+				// 	},
+				// 	{
+				// 		'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
+				// 		'threshold' : .6,
+				// 	},
+				// 	{
+				// 		'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
+				// 		'threshold' : 1,
+				// 	}
+				// ],
+				// water_colours = [
+				// 	{
+				// 		'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
+				// 		'threshold' : 0,
+				// 	},
+				// 	{
+				// 		'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
+				// 		'threshold' : 1,
+				// 	}
+				// ];
+			*/
 			
 	export const render_data = ( grid_data, final_freq_count, layer_options, above_options, below_options ) => {
 		const 	loader = new THREE.TextureLoader(),
@@ -16,13 +74,13 @@
 				camera = new THREE.PerspectiveCamera( 80, window.innerWidth / window.innerHeight, .1, 6000 ),
 				renderer = new THREE.WebGLRenderer(),
 				sun = new THREE.HemisphereLight( 0xffffff, 0x000000, 0.2 ),
-				directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
+				directionalLight = new THREE.AmbientLight( 0xffffff, 1 );
 
 		renderer.setSize( window.innerWidth, window.innerHeight );
 		document.body.appendChild( renderer.domElement );
 		camera.position.z = sun.position.z = directionalLight.position.z = layer_options.radius * 2; // make camera position more relative to window and readius
 
-		plot_points( grid_data, final_freq_count, layer_options, scene, above_options, below_options )
+		plot_points( grid_data.splice( 0, 6 ), final_freq_count, layer_options, scene, above_options, below_options );
 
 		scene.add( sun, directionalLight );
 
@@ -89,41 +147,52 @@
 		}
 	}
 
-	const get_water_colour_by_depth = ( depth, low = water_shallow_colour, high = water_deep_colour ) => {
-		const new_values = [];
+	const get_colour_by_amp = ( depth, colours ) => {
+		if ( depth > 0 ) {
+			let lower_colour_reference, higher_colour_reference, depth_relative_to_reference_colours, new_values = [];
 
-		for ( let i = 0; i < 3; i ++ ) {
-			const new_val = parseInt( low[ i ] - ( ( low[ i ] - high[ i ] ) * depth ) );
-			new_values.push( new_val < 0 ? 0 : new_val );
+			for ( let i = 0; i < colours.length - 1; i ++ ) {
+				if ( depth <= colours[ i + 1 ].threshold ) {
+					lower_colour_reference = colours[ i ].rgb;
+					higher_colour_reference = colours[ i + 1 ].rgb;
+					depth_relative_to_reference_colours = ( depth - colours[ i ].threshold ) / ( colours[ i + 1 ].threshold - colours[ i ].threshold );
+
+					break;
+				}
+			}
+
+			for ( let i = 0; i < 3; i ++ ) {
+				const new_val = parseInt( lower_colour_reference[ i ] - ( ( lower_colour_reference[ i ] - higher_colour_reference[ i ] ) * depth_relative_to_reference_colours ) );
+
+				new_values.push( new_val < 0 ? 0 : new_val );
+			}
+
+			return 'rgb( ' + new_values.join() + ' )';
+		} else {
+			return 'rgb( ' + colours[ 0 ].rgb.join() + ' )';
 		}
-
-		return 'rgb( ' + new_values.join() + ' )';
-	};
+	}
 
 	const add_face_to_goemetry = ( a, b, c, geometry, water_geometry, above_options, below_options ) => {
 		if ( use_earth ) {
-			let face = new THREE.Face3( a.index, b.index, c.index );
-
-			[ a, b, c ].forEach( ( item, index ) => {
-				const depth = parseFloat( ( item.amp_value / ( above_options.base_amp ) ).toFixed( 2 ) );
-
-				face.vertexColors[ index ] = new THREE.Color( get_water_colour_by_depth( depth, low_alt_colour, high_alt_colour ) );
-			} );
-
-			geometry.faces.push( face );
+			geometry.faces.push( create_geometry_face( a, b, c, above_options, terrain_colours ) );
 		}
 
 		if ( use_water && ( a.amp_value < 0 || b.amp_value < 0 || c.amp_value < 0 ) ) {
-			let face = new THREE.Face3( a.index, b.index, c.index );
-
-			[ a, b, c ].forEach( ( item, index ) => {
-				const depth = parseFloat( ( item.amp_value / ( below_options.base_amp * -1 ) ).toFixed( 2 ) );
-
-				face.vertexColors[ index ] = new THREE.Color( get_water_colour_by_depth( depth ) );
-			} );
-
-			water_geometry.faces.push( face );
+			water_geometry.faces.push( create_geometry_face( a, b, c, below_options, water_colours, -1 ) );
 		}
+	}
+
+	const create_geometry_face = ( a, b, c, options, colours, polarity = 1 ) => {
+		let face = new THREE.Face3( a.index, b.index, c.index );
+
+		if ( !wireframe ) [ a, b, c ].forEach( ( item, index ) => {
+			const depth = parseFloat( ( item.amp_value / ( options.base_amp * polarity ) ).toFixed( 2 ) );
+
+			face.vertexColors[ index ] = new THREE.Color( get_colour_by_amp( depth, colours ) );
+		} );
+
+		return face;
 	}
 
 	// Adds rotational drag controls
