@@ -16,7 +16,7 @@ export function generate_point_data ( layer_options, final_freq_count, sides_to_
 				bottom_as_appendable = build_appendable_data( [ ...sides[ 1 ][ 'layer_' + layer_index ] ] ),
 
 				// this isnt looping properly
-				placeholder_wrapping_panel = generate_mesh( layer_options, amount_to_skip, final_freq_count, top_as_appendable.length, layer_index, amp_multiplier, step_distance_multiplier, top_as_appendable, bottom_as_appendable, true );
+				placeholder_wrapping_panel = generate_mesh( layer_options, amount_to_skip, final_freq_count, ( ( ( final_freq_count - 1 ) * 4 ) + amount_to_skip ), layer_index, amp_multiplier, step_distance_multiplier, top_as_appendable, bottom_as_appendable, true );
 
 		for ( let i = 0; i < 4; i ++ ) {
 			if ( layer_index == 0 ) sides.push( {} );
@@ -50,7 +50,7 @@ const build_appendable_data = data => {
 			bottom = data[ data.length - 1 ].map( i => i ).reverse(),
 			left = data.map( ( row, index ) => [ 0, data.length - 1 ].indexOf( index ) == -1 ? row[ 0 ] : null ).filter( i => i ).reverse();
 
-	return [ ...top, ...right, ...bottom, ...left ];
+	return [ ...top, ...right, ...bottom, ...left, ...top ];
 }
 
 const build_panel = ( object, side_index, tert_coord_position, sub_index, angle_increment, radius ) => {
@@ -75,15 +75,15 @@ const generate_mesh = ( layer_options, amount_to_skip, row_count, column_count, 
 			let mesh_row = new Array( column_count ).fill( 0 );
 
 			for ( let j = 0; j < column_count; j += amount_to_skip ) { // loop through single row
-				mesh_row[ j ] = generate_point_amp( amp_multiplier );
+				// if ( loop && i == amount_to_skip ) console.log( 'CI: ' + j + '\nCC: ' + column_count + '\nATS: ' + amount_to_skip );
 
+				if ( loop && j == column_count - amount_to_skip ) {
+					mesh_row[ j ] = mesh_row[ 0 ];
+				} else {
+					mesh_row[ j ] = generate_point_amp( amp_multiplier );	
+				}
+				
 				if ( j != 0 && amount_to_skip != 1 ) backfill_points( mesh_row, amount_to_skip, j ); // backfill skipped points in row
-			}
-
-			if ( loop ) {
-				mesh_row[ mesh_row.length - 1 ] = mesh_row[ 0 ];
-
-				backfill_points( mesh_row, amount_to_skip, mesh_row.length - 1 );
 			}
 
 			mesh[ i ] = mesh_row;
@@ -94,7 +94,7 @@ const generate_mesh = ( layer_options, amount_to_skip, row_count, column_count, 
 					current_layer = mesh[ i ];
 
 			for ( let z = 0; z < amount_to_skip - 1; z ++ ) {
-				mesh[ i - ( ( amount_to_skip - 1 - z ) ) ] = create_fill_layer( z + 1, previous_layer, current_layer, column_count + ( loop ? amount_to_skip : 0 ), step_distance_multiplier );
+				mesh[ i - ( ( amount_to_skip - 1 - z ) ) ] = create_fill_layer( z + 1, previous_layer, current_layer, column_count, step_distance_multiplier );
 			} 
 		}
 	}
