@@ -124,7 +124,7 @@
 						'slug' : 'base_freq',
 						'value' : 6,
 						'min' : 2,
-						'max' : 36,
+						'max' : 10,
 						'active' : true
 					},
 					{
@@ -140,7 +140,7 @@
 						'slug' : 'base_layers',
 						'value' : 3,
 						'min' : 1,
-						'max' : 6,
+						'max' : 4,
 						'active' : true
 					},
 					{
@@ -156,7 +156,7 @@
 					{	
 						'title' : 'Base Amplitude',
 						'slug' : 'base_amp',
-						'value' : 100,
+						'value' : 80,
 						'min' : 0,
 						'max' : 200,
 						'active' : true
@@ -164,7 +164,7 @@
 					{
 						'title' : 'Amplitude_Bias',
 						'slug' : 'amp_bias',
-						'value' : 0,
+						'value' : 12,
 						'min' : -100,
 						'max' : 100,
 						'active' : true
@@ -174,7 +174,7 @@
 					{	
 						'title' : 'Base Amplitude',
 						'slug' : 'base_amp',
-						'value' : 80,
+						'value' : 100,
 						'min' : 0,
 						'max' : 200,
 						'active' : true
@@ -182,7 +182,7 @@
 					{
 						'title' : 'Amplitude_Bias',
 						'slug' : 'amp_bias',
-						'value' : -50,
+						'value' : -80,
 						'min' : -100,
 						'max' : 100,
 						'active' : true

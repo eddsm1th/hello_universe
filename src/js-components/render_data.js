@@ -4,76 +4,76 @@
 			use_water = true,
 			use_earth = true,
 
-			terrain_colours = [
-				{
-					'rgb' : [ 255, 255, 123 ],
-					'threshold' : 0,
-				},
-				{
-					'rgb' : [ 0, 204, 0 ],
-					'threshold' : .15,
-				},
-				{
-					'rgb' : [ 0, 102, 0 ],
-					'threshold' : .3,
-				},
-				{
-					'rgb' : [ 153, 76, 0 ],
-					'threshold' : .6,
-				},
-				{
-					'rgb' : [ 102, 51, 0 ],
-					'threshold' : 1,
-				}
-			],
-			water_colours = [
-				{
-					'rgb' : [ 0, 255, 255 ],
-					'threshold' : 0,
-				},
-				{
-					'rgb' : [ 0, 0, 150 ],
-					'threshold' : 1,
-				}
-			];
+			// terrain_colours = [
+			// 	{
+			// 		'rgb' : [ 255, 255, 123 ],
+			// 		'threshold' : 0,
+			// 	},
+			// 	{
+			// 		'rgb' : [ 0, 204, 0 ],
+			// 		'threshold' : .15,
+			// 	},
+			// 	{
+			// 		'rgb' : [ 0, 102, 0 ],
+			// 		'threshold' : .3,
+			// 	},
+			// 	{
+			// 		'rgb' : [ 153, 76, 0 ],
+			// 		'threshold' : .6,
+			// 	},
+			// 	{
+			// 		'rgb' : [ 102, 51, 0 ],
+			// 		'threshold' : 1,
+			// 	}
+			// ],
+			// water_colours = [
+			// 	{
+			// 		'rgb' : [ 0, 220, 255 ],
+			// 		'threshold' : 0,
+			// 	},
+			// 	{
+			// 		'rgb' : [ 0, 0, 90 ],
+			// 		'threshold' : 1,
+			// 	}
+			// ];
 
-			/* Random Colours
-				// terrain_colours = [
-				// 	{
-				// 		'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
-				// 		'threshold' : 0,
-				// 	},
-				// 	{
-				// 		'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
-				// 		'threshold' : .15,
-				// 	},
-				// 	{
-				// 		'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
-				// 		'threshold' : .6,
-				// 	},
-				// 	{
-				// 		'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
-				// 		'threshold' : 1,
-				// 	}
-				// ],
-				// water_colours = [
-				// 	{
-				// 		'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
-				// 		'threshold' : 0,
-				// 	},
-				// 	{
-				// 		'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
-				// 		'threshold' : 1,
-				// 	}
-				// ];
-			*/
+			/* Random Colours */
+				terrain_colours = [
+					{
+						'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
+						'threshold' : 0,
+					},
+					{
+						'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
+						'threshold' : .15,
+					},
+					{
+						'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
+						'threshold' : .6,
+					},
+					{
+						'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
+						'threshold' : 1,
+					}
+				],
+				water_colours = [
+					{
+						'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
+						'threshold' : 0,
+					},
+					{
+						'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
+						'threshold' : 1,
+					}
+				];
 			
 	export const render_data = ( grid_data, final_freq_count, layer_options, above_options, below_options ) => {
 		const 	loader = new THREE.TextureLoader(),
 				scene = new THREE.Scene(),
 				camera = new THREE.PerspectiveCamera( 80, window.innerWidth / window.innerHeight, .1, 6000 ),
 				renderer = new THREE.WebGLRenderer(),
-				sun = new THREE.HemisphereLight( 0xffffff, 0x000000, 0.2 ),
+				sun = new THREE.HemisphereLight( 0xffffff, 0x000000, .2 ),
+				// directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
 				directionalLight = new THREE.AmbientLight( 0xffffff, 1 );
 
 		renderer.setSize( window.innerWidth, window.innerHeight );
@@ -89,7 +89,7 @@
 			renderer.render( scene, camera );
 		} animate();
 
-		apply_spaceship_controls( camera );
+		apply_spaceship_controls( scene );
 
 		return grid_data;
 	}
@@ -152,7 +152,7 @@
 			let lower_colour_reference, higher_colour_reference, depth_relative_to_reference_colours, new_values = [];
 
 			for ( let i = 0; i < colours.length - 1; i ++ ) {
-				if ( depth <= colours[ i + 1 ].threshold ) {
+				if ( depth <= colours[ i + 1 ].threshold || i == colours.length - 2 ) {
 					lower_colour_reference = colours[ i ].rgb;
 					higher_colour_reference = colours[ i + 1 ].rgb;
 					depth_relative_to_reference_colours = ( depth - colours[ i ].threshold ) / ( colours[ i + 1 ].threshold - colours[ i ].threshold );
@@ -169,7 +169,7 @@
 
 			return 'rgb( ' + new_values.join() + ' )';
 		} else {
-			return 'rgb( ' + colours[ 0 ].rgb.join() + ' )';
+			return 'rgb( ' + colours[ 0 ].rgb.map( i => parseInt( i ) ).join() + ' )';
 		}
 	}
 

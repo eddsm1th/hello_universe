@@ -29,15 +29,10 @@ export const create_celestial_body_base = ( grid_data, layer_options, above_opti
 	const final_freq_count = get_final_frequency_count( layer_options );
 
 	grid_data = generate_point_data( layer_options, final_freq_count );
-
-	console.log( grid_data );
-	
 	grid_data = apply_terrain_to_celestial_body( grid_data, layer_options, above_options, below_options );
 	grid_data = map_data_onto_sphere( grid_data, layer_options, final_freq_count );
 
 	render_data( [ ...grid_data ], final_freq_count, layer_options, above_options, below_options );
-
-	
 
 	return grid_data;
 }
