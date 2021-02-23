@@ -68,13 +68,11 @@
 				];
 			
 	export const render_data = ( grid_data, final_freq_count, layer_options, above_options, below_options ) => {
-		const 	loader = new THREE.TextureLoader(),
-				scene = new THREE.Scene(),
+		const 	scene = new THREE.Scene(),
 				camera = new THREE.PerspectiveCamera( 80, window.innerWidth / window.innerHeight, .1, 6000 ),
 				renderer = new THREE.WebGLRenderer(),
 				sun = new THREE.HemisphereLight( 0xffffff, 0x000000, .2 ),
-				// directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
-				directionalLight = new THREE.AmbientLight( 0xffffff, 1 );
+				directionalLight = new THREE.DirectionalLight( 0xffffff, 1 );
 
 		renderer.setSize( window.innerWidth, window.innerHeight );
 		document.body.appendChild( renderer.domElement );
@@ -96,19 +94,22 @@
 
 	const plot_points = ( grid_data, final_freq_count, layer_options, scene, above_options, below_options ) => {
 		const 	geometry = new THREE.Geometry(),
-				material = ( !wireframe ? new THREE.MeshLambertMaterial( {
+				material = ( !wireframe ? new THREE.MeshStandardMaterial( {
+					// normalMap: new THREE.TextureLoader().load( './src/images/land.png' ),
 					vertexColors: THREE.FaceColors,
 					side: THREE.DoubleSide,
+					roughness: .8,
 				} ) : new THREE.MeshBasicMaterial( {
 					color: 0x00ff00,
 					wireframe: true,
 				} ) ),
 				water_geometry = new THREE.Geometry(),
 				water_material = ( !wireframe ? new THREE.MeshStandardMaterial( {
+					// normalMap: new THREE.TextureLoader().load( './src/images/water.png' ),
 					vertexColors: THREE.VertexColors,
-					roughness: .3,
 					transparent: true,
 					opacity: .8,
+					roughness: .3,
 					side: THREE.DoubleSide,
 				} ) : new THREE.MeshBasicMaterial( {
 					color: 0xff0000,
