@@ -30,6 +30,14 @@
 				type: Number,
 				required: true,
 			},
+			'title': {
+				type: String,
+				required: true,
+			},
+			'polarity': {
+				type: Number,
+				required: true,
+			}
 		},
 
 		data () {
@@ -49,7 +57,15 @@
 
 			window.addEventListener( 'mousemove', event => {
 				if ( this.can_drag ) {
-					this.$parent.update_value( ( ( this.click_coords.x - event.clientX ) / this.percent_per_pixel ) * -1 );
+					const 	value_addition = ( ( ( this.click_coords.x - event.clientX ) / this.percent_per_pixel ) * -1 ),
+							new_value = this.value + value_addition,
+							value = ( new_value < this.min ? this.min : ( new_value > this.max ? this.max : new_value ) );
+
+					this.$emit( 'updateValue', {
+						'value' : value,
+						'title' : this.title,
+						'polarity' : this.polarity,
+					} );
 
 					this.click_coords = {
 						'x' : event.clientX,

@@ -25,6 +25,7 @@
 				<component
 					:is="child_component"
 					:content="content"
+					:celestial_body="celestial_body"
 					v-on="$listeners"
 				/>
 			</div>
@@ -49,6 +50,10 @@
 			},
 			'child_component' : {
 				type: String,
+				required: true,
+			},
+			'celestial_body' : {
+				type: Object,
 				required: true,
 			}
 		},

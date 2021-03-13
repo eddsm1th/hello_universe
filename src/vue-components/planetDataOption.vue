@@ -3,12 +3,15 @@
 		class="data-option__inner"
 		v-if="data_option"
 	>
-		<h3 class="data-option__title"><span>{{ data_option.title }}&nbsp;</span><span>//&nbsp;{{ Math.round( data_option.value ) }}</span></h3>
+		<h3 class="data-option__title"><span>{{ data_option.title }}&nbsp;</span><span>//&nbsp;{{ Math.round( value ) }}</span></h3>
 
 		<valueSelector
 			:min="data_option.min"
 			:max="data_option.max"
-			:value="data_option.value"
+			:value="value"
+			:title="data_option.slug"
+			:polarity="polarity"
+			v-on="$listeners"
 		/>
 	</div>
 </template>
@@ -23,20 +26,20 @@
 			data_option: {
 				type: Object,
 				required: true
+			},
+			value: {
+				type: Number,
+				required: true,
+			},
+			polarity: {
+				type: Number,
+				default: 0,
 			}
 		},
 
 		components: {
 			valueSelector,
 		},
-
-		methods: {
-			update_value ( value_addition ) {
-				const new_value = this.data_option.value + value_addition;
-
-				this.data_option.value = ( new_value < this.data_option.min ? this.data_option.min : ( new_value > this.data_option.max ? this.data_option.max : new_value ) );
-			}
-		}
 	}
 </script>
 

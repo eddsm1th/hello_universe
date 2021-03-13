@@ -1,13 +1,14 @@
 <template>
 	<section class="selector clipped">
 		<h3 class="selector__title">
-			<span>CB://</span>
+			<span>CB://{{ celestial_body.name }}</span>
 		</h3>
 
 		<accordion
 			v-for="accordion, index in accordions"
 			:key="index"
 			:content="accordion.content"
+			:celestial_body="celestial_body"
 			:child_component="accordion.child_component"
 		></accordion>
 	</section>
@@ -21,6 +22,13 @@
 
 		components: {
 			accordion,
+		},
+
+		props: {
+			celestial_body: {
+				type: Object,
+				required: true,
+			}
 		},
 
 		data () {

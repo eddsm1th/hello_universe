@@ -41,12 +41,12 @@
 					<span v-if="!celestial_body.doom">Are you sure?
 						<i
 							class="selector__shadow-button"
-							@click.stop="celestial_body.blackhole = false;"
-						>no</i>
-						<i
-							class="selector__shadow-button"
 							@click.stop="destroy_celestial_body( celestial_body )"
 						>yes</i>
+						<i
+							class="selector__shadow-button"
+							@click.stop="celestial_body.blackhole = false;"
+						>no</i>
 					</span>
 					<span v-else>{{ celestial_body.doom_music }}</span>
 				</div>
@@ -81,7 +81,7 @@
 			select_celestial_body ( celestial_body ) {
 				this.$parent.selected_celestial_body = celestial_body;
 
-				this.$parent.load_state( 2 ); // celestial_body editor
+				this.$parent.load_state( 1 ); // celestial_body editor
 			},
 
 			destroy_celestial_body ( celestial_body ) {

@@ -4,7 +4,6 @@
         :class="{
             'instantiated' : instantiated
         }"
-        style="opacity: 0; "
     >
         <helloUniverse
             v-if="loaded"
@@ -23,8 +22,7 @@
             >
                 <component
                     :is="current_state.name"
-                    :solar_system_data="selected_solar_system"
-                    :solar_systems="solar_systems"
+                    :solar_system_data="solar_system_data"
                     :celestial_body="selected_celestial_body"
                 />
             </div>
@@ -34,7 +32,6 @@
 
 <script>
     import helloUniverse from './vue-components/helloUniverse.vue';
-    import solarSystemSelector from './vue-components/solarSystemSelector.vue';
     import solarSystemEditor from './vue-components/solarSystemEditor.vue';
     import celestialBodyEditor from './vue-components/celestialBodyEditor.vue';
 
@@ -43,13 +40,30 @@
 
         components: {
             helloUniverse,
-            solarSystemSelector,
             solarSystemEditor,
             celestialBodyEditor,
         },
 
         data () {
             return {
+                scene: null,
+
+                celestial_body_default_data: {
+                    'amp_diff' : 4,
+                    'base_freq' : 6,
+                    'freq_diff' : 3,
+                    'base_layers' : 3,
+                    'radius' : 600,
+                    'above' : {
+                        'base_amp' : 80,
+                        'amp_bias' : 12,
+                    },
+                    'below' : {
+                        'base_amp' : 100,
+                        'amp_bias' : -80,
+                    }
+                },
+
                 placeholder_body: null,
                 instantiated: false,
                 loaded: false,
@@ -61,24 +75,23 @@
 
                 states: [
                     {
-                        'name' : 'solarSystemSelector',
-                        'active' : false
-                    },
-                    {
                         'name' : 'solarSystemEditor',
-                        'active' : false
+                        'active' : true
                     },
                     {
                         'name' : 'celestialBodyEditor',
-                        'active' : true
+                        'active' : false
                     },
                 ],
 
-                solar_systems: [],
-                selected_solar_system: {},
                 selected_celestial_body: {},
 
                 theme_music: ['Thanks for all the fish!','404','¯\\_(ツ)_/¯', 'CYA_TMR','EXTRA LIFE!','FATALITY','Thanks for staying!','...oops','EXECUTE ORDER 66','*SNAP*','Pulling an Alderaan...','blackhole.exe','The 8th day'],
+
+                solar_system_data: {
+                    'name' : 'My first solar system',
+                    'celestial_bodies' : []
+                },
             }
         },
 
@@ -89,9 +102,7 @@
         },
 
         mounted () {
-            this.solar_systems = [
-                this.make_solar_system(),
-            ];
+            this.solar_system_data.celestial_bodies.push( this.make_celestial_body() );
 
             setTimeout( () => this.instantiated = true, 300 );
             setTimeout( () => this.loaded = true, 500 ); 
@@ -118,22 +129,14 @@
                 setTimeout( () => this.state_height = ( height || this.$refs.state_content.offsetHeight + 1 + 'px' ), delay )
             },
 
-            make_solar_system ( data = {} ) {
-                return {
-                    'name' : data.name || 'My First Solar System',
-                    'celestial_bodies' : data.celestial_bodies || [ this.make_celestial_body() ],
-                    'blackhole' : data.blackhole || false,
-                    'doom' : data.doom || false,
-                    'doom_music' : this.theme_music[ Math.floor( Math.random() * this.theme_music.length ) ],
-                };
-            },
-
             make_celestial_body ( data = {} ) {
                 return {
                     'name' : data.name || 'My First Celestial Body',
                     'blackhole' : data.blackhole || false,
                     'doom' : data.doom || false,
                     'doom_music' : this.theme_music[ Math.floor( Math.random() * this.theme_music.length ) ],
+                    'generation_attributes' : data.generation_attributes || { ...this.celestial_body_default_data },
+                    'point_data' : data.point_data || null,
                 };
             }
         }
@@ -141,6 +144,8 @@
 </script>
 
 <style lang="scss">
+    @import "/scss-components/_mixins.scss";
+
     *, *:before, *:after {
         box-sizing: border-box;
         margin: 0;
@@ -198,6 +203,160 @@
 
         &__inner {
             padding-top: 20px;
+        }
+    }
+
+    .selector {
+        @include clipped;
+        padding: 20px;
+        border: 1px solid #fff;
+        color: #fff;
+        &__title {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            small {
+                width: 100%;
+                font-size: 10px;
+            }
+        }
+        &__list, &__options {
+            list-style: none;
+        }
+        &__item {
+            padding: 8px 60px 8px 12px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            position: relative;
+            &:not(.blackhole):hover {
+                @include clipped;
+                border: 1px solid #fff;
+            }
+            &:not(:last-child) {
+                margin-bottom: 12px;
+            }
+            small {
+                font-size: 10px;
+            }
+            &.blackhole {
+                border: 1px solid transparent;
+                background-color: transparent;
+                > * {
+                    opacity: 0;
+                }
+            }
+        }
+        &__item-title {
+            background: transparent;
+            border: none;
+            border-radius: 0px;
+            width: auto;
+            color: inherit;
+            width: 100%;
+        }
+        &__options {
+            margin-top: 20px;
+            display: flex;
+            margin-left: -12px;
+        }
+        &__option {
+            @include clipped;
+            padding-left: 12px;
+            min-width: 50%;
+            font-size: 12px;
+            
+            button {
+                padding: 12px 12px;
+                border: 1px solid #fff;
+                transition: .3s background-color ease;
+                background-color: transparent;
+                width: 100%;
+                color: #fff;
+                text-align: left;
+                border-radius: 0;
+                &:hover {
+                    background-color: rgba( 255, 255, 255, .2 );
+                }
+            }
+        }
+        &_delete:hover {
+            border: 1px solid #f00;
+        }
+        &__delete {
+            position: absolute;
+            top: 50%;
+            right: 12px;
+            width: 1em;
+            height: 1em;
+            border: 1px solid #fff;
+            transform: translateY(-50%);
+            &:hover {
+                border: 1px solid #f00;
+                &:after, &:before {
+                    background-color: #f00;
+                }
+            }
+            &:after, &:before {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 1px;
+                height: 144%;
+                transform: translate( -50%, -50%) rotate(45deg);
+                background: #fff;
+            }
+            &:after {
+                transform: translate( -50%, -50%) rotate(-45deg);
+            }
+        }
+        &__shadow {
+            @include clipped ( #f00 );
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 1px solid #f00;
+            font-size: 12px;
+            z-index: 99;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #f00;
+            opacity: 0;
+            pointer-events: none;
+            &.blackhole {
+                opacity: 1;
+                pointer-events: auto;
+            }
+        }
+        &__shadow-button {
+            margin-left: 12px;
+            padding: 0 12px;
+            position: relative;
+            transition: .2s background-color ease;
+            &:hover {
+                background-color: rgba( 255, 0, 0, .2 );
+            }
+            &:after, &:before {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 0;
+                width: 4px;
+                height: 120%;
+                border: 1px solid #f00;
+                border-right: none;
+                transform: translateY(-50%);
+            }
+            &:after {
+                right: 0;
+                left: auto;
+                border-right: 1px solid #f00;
+                border-left: none;
+            }
         }
     }
 </style>

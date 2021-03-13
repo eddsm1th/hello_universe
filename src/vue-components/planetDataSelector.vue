@@ -7,11 +7,13 @@
 					<ul class="planet-options__list">
 						<li
 							class="data-option"
-							v-for="data_option, index in viable_data_options"
+							v-for="data_option, index in data_options"
 							:key="index"
 						>
 							<planetDataOption
 								:data_option="data_option"
+								:value="celestial_body.generation_attributes[ data_option.slug ]"
+								v-on:updateValue="update_value"
 							/>
 						</li>
 					</ul>
@@ -31,6 +33,9 @@
 						>
 							<planetDataOption
 								:data_option="data_option"
+								:value="celestial_body.generation_attributes.above[ data_option.slug ]"
+								:polarity="1"
+								v-on:updateValue="update_value"
 							/>
 						</li>
 					</ul>
@@ -50,6 +55,9 @@
 						>
 							<planetDataOption
 								:data_option="data_option"
+								:value="celestial_body.generation_attributes.below[ data_option.slug ]"
+								:polarity="-1"
+								v-on:updateValue="update_value"
 							/>
 						</li>
 					</ul>
@@ -79,6 +87,10 @@
 			content: {
 				type: Object,
 				required: true
+			},
+			celestial_body: {
+				type: Object,
+				required: true
 			}
 		},
 
@@ -87,105 +99,94 @@
 		},
 
 		mounted () {
-			this.submit_planet_data();
+			/*
+				uncomment to generate planet on load
+			*/
+			// this.submit_planet_data();
 		},
 
 		methods: {
 			submit_planet_data () {
 				let data = {}, above_data = {}, below_data = {};
 
-				this.data_options.forEach( item => data[ item.slug ] = Math.round( item.value ) );
-				this.above_options.forEach( item => above_data[ item.slug ] = Math.round( item.value ) );
-				this.below_options.forEach( item => below_data[ item.slug ] = Math.round( item.value ) );
-				this.grid_data = create_celestial_body_base( [], data, above_data, below_data );
-	        }
-		},
+				this.celestial_body.generation_attributes.forEach( item => data[ item.slug ] = Math.round( item.value ) );
+				this.celestial_body.generation_attributes.above.forEach( item => above_data[ item.slug ] = Math.round( item.value ) );
+				this.celestial_body.generation_attributes.below.forEach( item => below_data[ item.slug ] = Math.round( item.value ) );
+				
+				const grid_data = create_celestial_body_base( [], data, above_data, below_data );
+	        },
 
-		computed: {
-			viable_data_options () {
-				return this.data_options.filter( item => item.active );
-			}
+	        update_value ( { value, title, polarity } ) {
+	        	if ( polarity == 0 ) {
+	        		this.celestial_body.generation_attributes[ title ] = value;
+	        	} else if ( polarity == -1 ) {
+	        		this.celestial_body.generation_attributes.below[ title ] = value;
+	        	} else if ( polarity == 1 ) {
+	        		this.celestial_body.generation_attributes.above[ title ] = value;
+	        	}
+	        }
 		},
 
 		data () {
 			return {
-				grid_data: null,
 				data_options: [
 					{
 						'title' : 'Amplitude_Layer_Division',
 						'slug' : 'amp_diff',
-						'value' : 4,
 						'min' : 1,
 						'max' : 10,
-						'active' : true
 					},
 					{
 						'title' : 'Base_Frequency',
 						'slug' : 'base_freq',
-						'value' : 6,
 						'min' : 2,
 						'max' : 10,
-						'active' : true
 					},
 					{
 						'title' : 'Frequency_Layer_Multiplication',
 						'slug' : 'freq_diff',
-						'value' : 3,
 						'min' : 2,
 						'max' : 6,
-						'active' : true
 					},
 					{
 						'title' : 'Layers',
 						'slug' : 'base_layers',
-						'value' : 3,
 						'min' : 1,
 						'max' : 4,
-						'active' : true
 					},
 					{
 						'title' : 'Radius',
 						'slug' : 'radius',
-						'value' : 600,
 						'min' : 100,
 						'max' : 1000,
-						'active' : true
 					},
 				],
 				above_options: [
 					{	
 						'title' : 'Base Amplitude',
 						'slug' : 'base_amp',
-						'value' : 80,
 						'min' : 0,
 						'max' : 200,
-						'active' : true
 					},
 					{
 						'title' : 'Amplitude_Bias',
 						'slug' : 'amp_bias',
-						'value' : 12,
 						'min' : -100,
 						'max' : 100,
-						'active' : true
 					},
 				],
 				below_options: [
 					{	
 						'title' : 'Base Amplitude',
 						'slug' : 'base_amp',
-						'value' : 100,
 						'min' : 0,
 						'max' : 200,
-						'active' : true
 					},
 					{
 						'title' : 'Amplitude_Bias',
 						'slug' : 'amp_bias',
-						'value' : -80,
 						'min' : -100,
 						'max' : 100,
-						'active' : true
 					},
 				],
 			}
