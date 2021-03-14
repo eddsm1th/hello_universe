@@ -55,6 +55,7 @@
 			display: flex;
 			justify-content: space-between;
 			margin-bottom: 4px;
+			font-size: 8px;
 		}
 	}
 </style>

@@ -9,7 +9,7 @@
 			class="hello-universe__content"
 			ref="main_body"
 		>
-			<i class="hello-universe__icon"></i>
+			<!-- <i class="hello-universe__icon"></i> -->
 			<h1
 				class="hello-universe__text"
 			>$://<span
@@ -150,6 +150,7 @@
 		&__icon {
 			height: 1em;
 			width: 1em;
+			font-size: 8px;
 			padding: 8px;
 			border: 1px solid #ffffff;
 			box-sizing: content-box;
@@ -161,9 +162,11 @@
 		&__text {
 			@include clipped;
 			flex: 1;
-			padding: 8px 12px;
-			font-size: 14px;
+			padding: 8px;
+			font-size: 10px;
 			border: 1px solid #ffffff;
+			color: #000000;
+			background-color: #ffffff;
 
 			span {
 				&:not(.active) {

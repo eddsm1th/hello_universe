@@ -155,6 +155,7 @@
         font-size: 1em;
         text-transform: uppercase;
         letter-spacing: .4em;
+        user-select: none;
     }
 
     body, html {
@@ -170,7 +171,6 @@
 
     .main {
         padding: 20px;
-        margin: 20px;
         position: absolute;
         width: 80%;
         max-width: 800px;
@@ -183,18 +183,6 @@
             padding-top: 0;
             padding-bottom: 0;
         }
-
-        &:after {
-            content: "";
-            position: absolute;
-            width: 100%;
-            height: calc( 100% + 16px );
-            top: -8px;
-            left: 0;
-            background: linear-gradient(90deg, rgba(255, 255, 255, .15), rgba(255, 255, 255, 0));
-            filter: blur(8px);
-            pointer-events: none;
-        }
     }
 
     .state-container {
@@ -202,43 +190,51 @@
         overflow: hidden;
 
         &__inner {
-            padding-top: 20px;
+            margin-top: 12px;
+            background-color: #000000;
         }
     }
 
     .selector {
         @include clipped;
-        padding: 20px;
         border: 1px solid #fff;
         color: #fff;
+
         &__title {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            small {
-                width: 100%;
-                font-size: 10px;
-            }
+            padding: 8px;
+            font-size: 8px;
+            background-color: #ffffff;
+            color: #000000;
         }
+
         &__list, &__options {
             list-style: none;
+            padding: 12px;
         }
+
+        &__options {
+            padding-top: 0;
+        }
+
         &__item {
             padding: 8px 60px 8px 12px;
             border: 1px solid transparent;
             cursor: pointer;
             position: relative;
+
             &:not(.blackhole):hover {
                 @include clipped;
                 border: 1px solid #fff;
             }
+
             &:not(:last-child) {
                 margin-bottom: 12px;
             }
+
             small {
                 font-size: 10px;
             }
+
             &.blackhole {
                 border: 1px solid transparent;
                 background-color: transparent;
@@ -247,6 +243,7 @@
                 }
             }
         }
+
         &__item-title {
             background: transparent;
             border: none;
@@ -255,11 +252,12 @@
             color: inherit;
             width: 100%;
         }
+
         &__options {
-            margin-top: 20px;
             display: flex;
             margin-left: -12px;
         }
+
         &__option {
             @include clipped;
             padding-left: 12px;
@@ -275,14 +273,17 @@
                 color: #fff;
                 text-align: left;
                 border-radius: 0;
+
                 &:hover {
                     background-color: rgba( 255, 255, 255, .2 );
                 }
             }
         }
-        &_delete:hover {
+
+        &__delete:hover {
             border: 1px solid #f00;
         }
+
         &__delete {
             position: absolute;
             top: 50%;
@@ -311,8 +312,9 @@
                 transform: translate( -50%, -50%) rotate(-45deg);
             }
         }
+
         &__shadow {
-            @include clipped ( #f00 );
+            @include clipped( #f00 );
             position: absolute;
             top: 0;
             left: 0;
@@ -327,19 +329,23 @@
             color: #f00;
             opacity: 0;
             pointer-events: none;
+
             &.blackhole {
                 opacity: 1;
                 pointer-events: auto;
             }
         }
+
         &__shadow-button {
             margin-left: 12px;
             padding: 0 12px;
             position: relative;
             transition: .2s background-color ease;
+
             &:hover {
                 background-color: rgba( 255, 0, 0, .2 );
             }
+
             &:after, &:before {
                 content: "";
                 position: absolute;
@@ -351,6 +357,7 @@
                 border-right: none;
                 transform: translateY(-50%);
             }
+
             &:after {
                 right: 0;
                 left: auto;

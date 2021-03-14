@@ -61,9 +61,9 @@
 				} );
 			} );
 
-			window.addEventListener( 'mousemove', event => {
+			window.addEventListener( 'mousemove', e => {
 				if ( this.can_drag ) {
-					const 	value_addition = ( ( ( this.click_coords.x - event.clientX ) / this.percent_per_pixel ) * -1 ),
+					const 	value_addition = ( ( ( this.click_coords.x - e.clientX ) / this.percent_per_pixel ) * -1 ),
 							new_value = this.value + value_addition,
 							value = ( new_value < this.min ? this.min : ( new_value > this.max ? this.max : new_value ) );
 
@@ -75,12 +75,12 @@
 					} );
 
 					this.click_coords = {
-						'x' : event.clientX,
+						'x' : e.clientX,
 					};
 				}
 			} );
 
-			window.addEventListener( 'blur', () => this.can_drag = false );
+			window.addEventListener( 'blur', e => this.can_drag = false );
 		},
 
 		methods: {
@@ -113,7 +113,7 @@
 			display: block;
 			height: 24px;
 			position: relative;
-			background: linear-gradient(-90deg, rgba( 255, 255, 255, .2 ), rgba( 255, 0, 0, 0 ) );
+			background-image: repeating-linear-gradient( 45deg, #000, #000 6px, #fff 8px );
 
 			&:after {
 				content: "";

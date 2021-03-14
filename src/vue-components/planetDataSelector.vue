@@ -98,13 +98,6 @@
 			planetDataOption
 		},
 
-		mounted () {
-			/*
-				uncomment to generate planet on load
-			*/
-			// this.submit_planet_data();
-		},
-
 		methods: {
 			submit_planet_data () {
 				this.celestial_body.point_data = create_celestial_body_base( this.celestial_body.generation_attributes );
@@ -192,12 +185,12 @@
 	.planet-options {
 		display: flex;
 		flex-wrap: wrap;
-		margin-top: -24px;
-		margin-left: -24px;
+		margin-top: -12px;
+		margin-left: -12px;
 
 		> * {
-			padding-top: 24px;
-			padding-left: 24px;
+			padding-top: 12px;
+			padding-left: 12px;
 		}
 
 		&__list {

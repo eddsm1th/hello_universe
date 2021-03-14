@@ -74,12 +74,14 @@
 		flex-shrink: 0;
 
 		&:not(:last-child) {
-			margin-bottom: 20px;
+			margin-bottom: 12px;
 		}
 
 		&__header {
-			padding: 12px;
-			font-size: 12px;
+			padding: 8px;
+			font-size: 8px;
+			background-color: #ffffff;
+			color: #000000;
 
 			&--border {
 				border-bottom: 1px solid #fff;
