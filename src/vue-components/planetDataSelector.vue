@@ -107,13 +107,7 @@
 
 		methods: {
 			submit_planet_data () {
-				let data = {}, above_data = {}, below_data = {};
-
-				this.celestial_body.generation_attributes.forEach( item => data[ item.slug ] = Math.round( item.value ) );
-				this.celestial_body.generation_attributes.above.forEach( item => above_data[ item.slug ] = Math.round( item.value ) );
-				this.celestial_body.generation_attributes.below.forEach( item => below_data[ item.slug ] = Math.round( item.value ) );
-				
-				const grid_data = create_celestial_body_base( [], data, above_data, below_data );
+				this.celestial_body.point_data = create_celestial_body_base( this.celestial_body.generation_attributes );
 	        },
 
 	        update_value ( { value, title, polarity } ) {

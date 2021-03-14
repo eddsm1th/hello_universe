@@ -51,8 +51,14 @@
 		},
 
 		mounted () {
-			window.addEventListener( 'mouseup', () => {
+			window.addEventListener( 'mouseup', e => {
 				this.can_drag = false;
+
+				this.$emit( 'updateValue', {
+					'value' : Math.round( this.value ),
+					'title' : this.title,
+					'polarity' : this.polarity,
+				} );
 			} );
 
 			window.addEventListener( 'mousemove', event => {
@@ -61,6 +67,7 @@
 							new_value = this.value + value_addition,
 							value = ( new_value < this.min ? this.min : ( new_value > this.max ? this.max : new_value ) );
 
+					// update this to be better
 					this.$emit( 'updateValue', {
 						'value' : value,
 						'title' : this.title,

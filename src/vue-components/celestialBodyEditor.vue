@@ -11,6 +11,8 @@
 			:celestial_body="celestial_body"
 			:child_component="accordion.child_component"
 		></accordion>
+
+		<h1 @click="back_up()">Back</h1>
 	</section>
 </template>
 
@@ -51,5 +53,11 @@
                 ]
 			}
 		},
+
+		methods: {
+			back_up () {
+				this.$parent.load_state( 0 );
+			}
+		}
 	}
 </script>
