@@ -40,7 +40,7 @@
 			/* Random Colours */
 				terrain_colours = [
 					{
-						'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
+						'rgb' : [ parseInt( Math.random() * 255 ), parseInt( Math.random() * 255 ), parseInt( Math.random() * 255 ) ],
 						'threshold' : 0,
 					},
 					{
@@ -58,7 +58,7 @@
 				],
 				water_colours = [
 					{
-						'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
+						'rgb' : [ parseInt( Math.random() * 255 ), parseInt( Math.random() * 255 ), parseInt( Math.random() * 255 ) ],
 						'threshold' : 0,
 					},
 					{
@@ -163,14 +163,14 @@
 			}
 
 			for ( let i = 0; i < 3; i ++ ) {
-				const new_val = parseInt( lower_colour_reference[ i ] - ( ( lower_colour_reference[ i ] - higher_colour_reference[ i ] ) * depth_relative_to_reference_colours ) );
+				const new_value = parseInt( lower_colour_reference[ i ] - ( ( lower_colour_reference[ i ] - higher_colour_reference[ i ] ) * depth_relative_to_reference_colours ) );
 
-				new_values.push( new_val < 0 ? 0 : new_val );
+				new_values.push( new_value < 0 ? 0 : new_value );
 			}
 
-			return 'rgb( ' + new_values.join() + ' )';
+			return `rgb( ${ new_values[ 0 ] }, ${ new_values[ 1 ] }, ${ new_values[ 2 ] } )`;
 		} else {
-			return 'rgb( ' + colours[ 0 ].rgb.map( i => parseInt( i ) ).join() + ' )';
+			return `rgb( ${ colours[ 0 ].rgb[ 0 ] }, ${ colours[ 0 ].rgb[ 1 ] }, ${ colours[ 0 ].rgb[ 2 ] } )`;
 		}
 	}
 
@@ -187,11 +187,11 @@
 	const create_geometry_face = ( a, b, c, options, colours, polarity = 1 ) => {
 		let face = new THREE.Face3( a.index, b.index, c.index );
 
-		if ( !wireframe ) [ a, b, c ].forEach( ( item, index ) => {
-			const depth = parseFloat( ( item.amp_value / ( options.base_amp * polarity ) ).toFixed( 2 ) );
+		if ( !wireframe ) for ( let i = 0; i < 3; i ++ ) {
+			const depth = [ a, b, c ][ i ].amp_value / ( options.base_amp * polarity );
 
-			face.vertexColors[ index ] = new THREE.Color( get_colour_by_amp( depth, colours ) );
-		} );
+			face.vertexColors[ i ] = new THREE.Color( get_colour_by_amp( depth, colours ) );
+		}
 
 		return face;
 	}
