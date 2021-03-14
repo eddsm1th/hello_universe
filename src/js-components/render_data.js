@@ -122,8 +122,8 @@
 				if ( use_water ) water_geometry.vertices.push( new THREE.Vector3( item.base_z, item.base_x, item.base_y ) );
 			} );
 
-			for ( let i = 1; i < data.length; i ++ ) {
-				for ( let j = 0; j < data[ i ].length - 1; j ++ ) {
+			for ( let i = 1, _in = data.length; i < _in; i ++ ) {
+				for ( let j = 0, _jn = data[ i ].length - 1; j < _jn; j ++ ) {
 					const points = {
 						'oo' : data[ i ][ j ],
 						'oi' : data[ i - 1 ][ j ],
@@ -152,7 +152,7 @@
 		if ( depth > 0 ) {
 			let lower_colour_reference, higher_colour_reference, depth_relative_to_reference_colours, new_values = [];
 
-			for ( let i = 0; i < colours.length - 1; i ++ ) {
+			for ( let i = 0, _in = colours.length - 1; i < _in; i ++ ) {
 				if ( depth <= colours[ i + 1 ].threshold || i == colours.length - 2 ) {
 					lower_colour_reference = colours[ i ].rgb;
 					higher_colour_reference = colours[ i + 1 ].rgb;
