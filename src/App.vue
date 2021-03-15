@@ -50,8 +50,8 @@
 
                 celestial_body_default_data: {
                     'amp_diff' : 4,
-                    'base_freq' : 6,
-                    'freq_diff' : 3,
+                    'base_freq' : 8,
+                    'freq_diff' : 4,
                     'base_layers' : 3,
                     'radius' : 600,
                     'above' : {
