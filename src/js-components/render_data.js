@@ -87,7 +87,7 @@
 			renderer.render( scene, camera );
 		} animate();
 
-		apply_spaceship_controls( camera );
+		apply_spaceship_controls( scene );
 
 		return grid_data;
 	}

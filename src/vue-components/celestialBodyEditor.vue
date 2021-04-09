@@ -11,6 +11,7 @@
 				:content="accordion.content"
 				:celestial_body="celestial_body"
 				:child_component="accordion.child_component"
+				v-on="$listeners"
 			></accordion>
 
 			<h1 @click="$parent.load_state( 0 )">Back</h1>

@@ -1,37 +1,47 @@
 <template>
-    <main
-        class="main"
-        :class="{
-            'instantiated' : instantiated
-        }"
-    >
-        <helloUniverse
-            v-if="loaded"
+    <main>
+        <loading
+            v-if="is_in_loading_state"
+            :custom_content="custom_loading_message"
         />
 
         <section
-            v-if="loaded"
-            class="state-container"
-            :style="{
-                height : state_height,
+            class="main"
+            :class="{
+                'instantiated' : instantiated,
+                'is_in_loading_state' : is_in_loading_state,
             }"
         >
-            <div
-                class="state-container__inner"
-                ref="state_content"
+            <helloUniverse
+                v-if="loaded"
+            />
+
+            <section
+                v-if="loaded"
+                class="state-container"
+                :style="{
+                    height : state_height,
+                }"
             >
-                <component
-                    :is="current_state.name"
-                    :solar_system_data="solar_system_data"
-                    :celestial_body="selected_celestial_body"
-                />
-            </div>
+                <div
+                    class="state-container__inner"
+                    ref="state_content"
+                >
+                    <component
+                        :is="current_state.name"
+                        :solar_system_data="solar_system_data"
+                        :celestial_body="selected_celestial_body"
+                        v-on:isLoading="set_is_loading"
+                    />
+                </div>
+            </section>
         </section>
     </main>
 </template>
 
 <script>
     import helloUniverse from './vue-components/helloUniverse.vue';
+    import loading from './vue-components/loading.vue';
     import solarSystemEditor from './vue-components/solarSystemEditor.vue';
     import celestialBodyEditor from './vue-components/celestialBodyEditor.vue';
 
@@ -42,11 +52,15 @@
             helloUniverse,
             solarSystemEditor,
             celestialBodyEditor,
+            loading
         },
 
         data () {
             return {
                 scene: null,
+
+                is_in_loading_state: false,
+                custom_loading_message: '',
 
                 celestial_body_default_data: {
                     'amp_diff' : 4,
@@ -102,7 +116,7 @@
         },
 
         mounted () {
-            this.solar_system_data.celestial_bodies.push( this.make_celestial_body() );
+            if ( this.solar_system_data.celestial_bodies.length == 0 ) this.solar_system_data.celestial_bodies.push( this.make_celestial_body() );
 
             setTimeout( () => this.instantiated = true, 300 );
             setTimeout( () => this.loaded = true, 500 ); 
@@ -138,6 +152,11 @@
                     'generation_attributes' : data.generation_attributes || { ...this.celestial_body_default_data },
                     'point_data' : data.point_data || null,
                 };
+            },
+
+            set_is_loading ( { state, custom_message } = { state: false, custom_message: 'Beep boop beep boop' } ) {
+                this.is_in_loading_state = state;
+                this.custom_loading_message = custom_message;
             }
         }
     };
@@ -171,17 +190,22 @@
 
     .main {
         padding: 20px;
-        position: absolute;
+        // position: absolute;
         width: 80%;
         max-width: 800px;
         display: flex;
         flex-direction: column;
-        transition: .3s width ease, .3s padding-top ease, .3s padding-bottom ease;
+        transition: .3s width ease, .3s padding-top ease, .3s padding-bottom ease, .3s opacity ease;
 
         &:not(.instantiated) {
             width: 0;
             padding-top: 0;
             padding-bottom: 0;
+        }
+
+        &.is_in_loading_state {
+            opacity: .4;
+            pointer-events: none;
         }
     }
 
@@ -199,6 +223,7 @@
         @include clipped;
         border: 1px solid #fff;
         color: #fff;
+        background-color: #000;
 
         &__title {
             padding: 8px;

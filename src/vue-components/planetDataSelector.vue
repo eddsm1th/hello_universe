@@ -100,7 +100,15 @@
 
 		methods: {
 			submit_planet_data () {
-				this.celestial_body.point_data = create_celestial_body_base( this.celestial_body.generation_attributes );
+				this.$emit( 'isLoading', {
+					state: true,
+					custom_message: 'Generating celestial body',
+				} );
+
+				setTimeout( () => {
+					this.celestial_body.point_data = create_celestial_body_base( this.celestial_body.generation_attributes );
+					this.$emit( 'isLoading' );
+				}, 0 )
 	        },
 
 	        update_value ( { value, title, polarity } ) {

@@ -126,7 +126,7 @@
 				if ( index !== this.steps.length - 1 ) {
 					setTimeout( () => {
 						this.type_in_text( index + 1, this.steps[ index + 1 ] );
-					}, current_index.timing * 2 );
+					}, current_index.timing );
 				} else {
 					setTimeout( () => this.$parent.set_initial_state(), 200 );
 				}
