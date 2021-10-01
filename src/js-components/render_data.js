@@ -118,10 +118,12 @@
 
 		grid_data.forEach( ( { data } ) => {
 			data.flat().forEach( item => {
-				if ( use_earth ) geometry.vertices.push( new THREE.Vector3( item.z, item.x, item.y ) );
-				if ( use_water ) water_geometry.vertices.push( new THREE.Vector3( item.base_z, item.base_x, item.base_y ) );
+				if ( use_earth ) geometry.vertices.push( new THREE.Vector3( item.x, item.y, item.z ) );
+				if ( use_water ) water_geometry.vertices.push( new THREE.Vector3( item.base_x, item.base_y, item.base_z ) );
 			} );
+		} );
 
+		grid_data.forEach( ( { data } ) => {
 			for ( let i = 1, _in = data.length; i < _in; i ++ ) {
 				for ( let j = 0, _jn = data[ i ].length - 1; j < _jn; j ++ ) {
 					const points = {
@@ -131,8 +133,7 @@
 						'ii' : data[ i - 1 ][ j + 1 ],
 					};
 
-					add_face_to_goemetry( points.ii, points.io, points.oo, geometry, water_geometry, above_options, below_options );
-					add_face_to_goemetry( points.ii, points.oo, points.oi, geometry, water_geometry, above_options, below_options );	
+					add_face_to_goemetry( points, geometry, water_geometry, above_options, below_options );
 				}
 			}
  		} );
@@ -174,21 +175,48 @@
 		}
 	}
 
-	const add_face_to_goemetry = ( a, b, c, geometry, water_geometry, above_options, below_options ) => {
+	const add_face_to_goemetry = ( points, geometry, water_geometry, above_options, below_options ) => {
+		points.avg_amplitude = [ points.oo.amp_value, points.oi.amp_value, points.io.amp_value, points.ii.amp_value ].reduce( ( a, b ) => a + b ) / 4
+
 		if ( use_earth ) {
-			geometry.faces.push( create_geometry_face( a, b, c, above_options, terrain_colours ) );
+			points.terrain_true_middle = {
+				x : [ points.oo.x, points.oi.x, points.io.x, points.ii.x ].reduce( ( a, b ) => a + b ) / 4,
+				y : [ points.oo.y, points.oi.y, points.io.y, points.ii.y  ].reduce( ( a, b ) => a + b ) / 4,
+				z : [ points.oo.z, points.oi.z, points.io.z, points.ii.z ].reduce( ( a, b ) => a + b ) / 4,
+			};
+
+			geometry.vertices.push( new THREE.Vector3( points.terrain_true_middle.x, points.terrain_true_middle.y, points.terrain_true_middle.z ) );
+
+			geometry.faces.push( create_geometry_face( points.oo, points.io, geometry.vertices.length - 1, above_options, terrain_colours, points.avg_amplitude ) );
+			geometry.faces.push( create_geometry_face( points.io, points.ii, geometry.vertices.length - 1, above_options, terrain_colours, points.avg_amplitude ) );
+			geometry.faces.push( create_geometry_face( points.ii, points.oi, geometry.vertices.length - 1, above_options, terrain_colours, points.avg_amplitude ) );
+			geometry.faces.push( create_geometry_face( points.oi, points.oo, geometry.vertices.length - 1, above_options, terrain_colours, points.avg_amplitude ) );
 		}
 
-		if ( use_water && ( a.amp_value < 0 || b.amp_value < 0 || c.amp_value < 0 ) ) {
-			water_geometry.faces.push( create_geometry_face( a, b, c, below_options, water_colours, -1 ) );
+		if ( use_water && ( points.oo.amp_value <= 0 || points.oi.amp_value <= 0 || points.ii.amp_value <= 0 || points.io.amp_value <= 0 ) ) {
+			points.water_true_middle = {
+				x : [ points.oo.base_x, points.oi.base_x, points.io.base_x, points.ii.base_x ].reduce( ( a, b ) => a + b ) / 4,
+				y : [ points.oo.base_y, points.oi.base_y, points.io.base_y, points.ii.base_y  ].reduce( ( a, b ) => a + b ) / 4,
+				z : [ points.oo.base_z, points.oi.base_z, points.io.base_z, points.ii.base_z ].reduce( ( a, b ) => a + b ) / 4,
+			};
+
+			water_geometry.vertices.push( new THREE.Vector3( points.water_true_middle.x, points.water_true_middle.y, points.water_true_middle.z ) );
+
+			water_geometry.faces.push( create_geometry_face( points.oo, points.io, water_geometry.vertices.length - 1, below_options, water_colours, points.avg_amplitude, -1 ) );
+			water_geometry.faces.push( create_geometry_face( points.io, points.ii, water_geometry.vertices.length - 1, below_options, water_colours, points.avg_amplitude, -1 ) );
+			water_geometry.faces.push( create_geometry_face( points.ii, points.oi, water_geometry.vertices.length - 1, below_options, water_colours, points.avg_amplitude, -1 ) );
+			water_geometry.faces.push( create_geometry_face( points.oi, points.oo, water_geometry.vertices.length - 1, below_options, water_colours, points.avg_amplitude, -1 ) );
 		}
 	}
 
-	const create_geometry_face = ( a, b, c, options, colours, polarity = 1 ) => {
-		let face = new THREE.Face3( a.index, b.index, c.index );
+	const create_geometry_face = ( a, b, c, options, colours, center_amp, polarity = 1 ) => {
+		let face = new THREE.Face3( a.index, b.index, c );
+
+		const 	a_amp = a.amp_value,
+				b_amp = b.amp_value;
 
 		if ( !wireframe ) for ( let i = 0; i < 3; i ++ ) {
-			const depth = [ a, b, c ][ i ].amp_value / ( options.base_amp * polarity );
+			const depth = [ a_amp, b_amp, center_amp ][ i ] / ( options.base_amp * polarity );
 
 			face.vertexColors[ i ] = new THREE.Color( get_colour_by_amp( depth, colours ) );
 		}

@@ -1,5 +1,7 @@
+const radian = Math.PI / 180;
+
 export function generate_point_data ( layer_options, final_freq_count ) {
-	let sides = [];
+	let sides = [ {}, {}, {}, {}, {}, {} ];
 
 	for ( let layer_index = 0; layer_index < layer_options.base_layers; layer_index ++ ) {
 		const 	amount_to_skip = Math.pow( layer_options.freq_diff, ( layer_options.base_layers - layer_index ) - 1 ),
@@ -7,8 +9,6 @@ export function generate_point_data ( layer_options, final_freq_count ) {
 				step_distance_multiplier = Math.pow( layer_options.freq_diff, ( layer_options.base_layers - 1 ) );
 
 		for ( let side_index = 0; side_index < 2; side_index ++ ) { // build top and bottom panels ready to inject into wrapping panel
-			if ( layer_index == 0 ) sides.push( {} );
-
 			sides[ side_index ][ 'layer_' + layer_index ] = generate_mesh( layer_options, amount_to_skip, final_freq_count, final_freq_count, layer_index, amp_multiplier, step_distance_multiplier );
 		}
 
@@ -17,8 +17,6 @@ export function generate_point_data ( layer_options, final_freq_count ) {
 				placeholder_wrapping_panel = generate_mesh( layer_options, amount_to_skip, final_freq_count, ( ( ( final_freq_count - 1 ) * 4 ) + amount_to_skip ), layer_index, amp_multiplier, step_distance_multiplier, top_as_appendable, bottom_as_appendable, true );
 
 		for ( let i = 0; i < 4; i ++ ) {
-			if ( layer_index == 0 ) sides.push( {} );
-
 			sides[ i + 2 ][ 'layer_' + layer_index ] = placeholder_wrapping_panel.map( inst => [ ...inst ].splice( ( final_freq_count - 1 ) * i, final_freq_count ) );
 		}
 	}
@@ -45,21 +43,21 @@ export function generate_point_data ( layer_options, final_freq_count ) {
 const build_appendable_data = data => {
 	const 	top = data[ 0 ],
 			right = data.map( ( row, index ) => [ 0, data.length - 1 ].indexOf( index ) == -1 ? row[ row.length - 1 ] : null ).filter( i => i ),
-			bottom = data[ data.length - 1 ].map( i => i ).reverse(),
+			bottom = [ ...data[ data.length - 1 ] ].reverse(),
 			left = data.map( ( row, index ) => [ 0, data.length - 1 ].indexOf( index ) == -1 ? row[ 0 ] : null ).filter( i => i ).reverse();
 
 	return [ ...top, ...right, ...bottom, ...left, ...top ];
 }
 
 const build_panel = ( object, side_index, tert_coord_position, sub_index, angle_increment, radius ) => {
-	object[ [ 'y', 'y', 'z', 'x', 'z', 'x' ][ side_index ] ] = radius * ( [ 1, 2, 5 ].indexOf( side_index ) != -1 ? -1 : 1 );
-	object[ [ 'x', 'x', 'x', 'z', 'x', 'z' ][ side_index ] ] = ( Math.tan( degree_in_radians( -45 + ( angle_increment * sub_index ) ) ) * radius ) * ( [ 4, 5 ].indexOf( side_index ) != -1 ? -1 : 1 );
-	object[ [ 'z', 'z', 'y', 'y', 'y', 'y' ][ side_index ] ] = tert_coord_position * ( [ 2, 3, 4, 5 ].indexOf( side_index ) != -1 ? -1 : 1 );
+	object[ [ 'y', 'y', 'z', 'x', 'z', 'x' ][ side_index ] ] = radius * [ 1, -1, -1, 1, 1, -1 ][ side_index ];
+	object[ [ 'x', 'x', 'x', 'z', 'x', 'z' ][ side_index ] ] = ( Math.tan( degree_in_radians( -45 + ( angle_increment * sub_index ) ) ) * radius ) * [ 1, 1, 1, 1, -1, -1 ][ side_index ];
+	object[ [ 'z', 'z', 'y', 'y', 'y', 'y' ][ side_index ] ] = tert_coord_position * [ 1, 1, -1, -1, -1, -1 ][ side_index ];
 
 	return object;
 }
 
-const degree_in_radians = angle => angle * ( Math.PI / 180 );
+const degree_in_radians = angle => angle * radian;
 
 // Generate panel layer mesh
 const generate_mesh = ( layer_options, amount_to_skip, row_count, column_count, layer_index, amp_multiplier, step_distance_multiplier, prefix_data = null, suffix_data = null, loop = false ) => {

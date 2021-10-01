@@ -27,6 +27,8 @@ import { apply_terrain_to_celestial_body } from './apply_terrain_to_celestial_bo
 
 // Master planet creator
 export const create_celestial_body_base = layer_options => {
+	var start = window.performance.now();
+
 	const final_freq_count = get_final_frequency_count( layer_options );
 	let grid_data;
 
@@ -35,6 +37,9 @@ export const create_celestial_body_base = layer_options => {
 	grid_data = map_data_onto_sphere( grid_data, layer_options, final_freq_count );
 
 	render_data( [ ...grid_data ], final_freq_count, layer_options, layer_options.above, layer_options.below );
+
+	var end = window.performance.now();
+	console.log(`Execution time: ${end - start} ms`);
 
 	return grid_data;
 }
