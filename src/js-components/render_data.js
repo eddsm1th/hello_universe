@@ -181,7 +181,7 @@
 		if ( use_earth ) {
 			points.terrain_true_middle = {
 				x : [ points.oo.x, points.oi.x, points.io.x, points.ii.x ].reduce( ( a, b ) => a + b ) / 4,
-				y : [ points.oo.y, points.oi.y, points.io.y, points.ii.y  ].reduce( ( a, b ) => a + b ) / 4,
+				y : [ points.oo.y, points.oi.y, points.io.y, points.ii.y ].reduce( ( a, b ) => a + b ) / 4,
 				z : [ points.oo.z, points.oi.z, points.io.z, points.ii.z ].reduce( ( a, b ) => a + b ) / 4,
 			};
 
@@ -196,7 +196,7 @@
 		if ( use_water && ( points.oo.amp_value <= 0 || points.oi.amp_value <= 0 || points.ii.amp_value <= 0 || points.io.amp_value <= 0 ) ) {
 			points.water_true_middle = {
 				x : [ points.oo.base_x, points.oi.base_x, points.io.base_x, points.ii.base_x ].reduce( ( a, b ) => a + b ) / 4,
-				y : [ points.oo.base_y, points.oi.base_y, points.io.base_y, points.ii.base_y  ].reduce( ( a, b ) => a + b ) / 4,
+				y : [ points.oo.base_y, points.oi.base_y, points.io.base_y, points.ii.base_y ].reduce( ( a, b ) => a + b ) / 4,
 				z : [ points.oo.base_z, points.oi.base_z, points.io.base_z, points.ii.base_z ].reduce( ( a, b ) => a + b ) / 4,
 			};
 
