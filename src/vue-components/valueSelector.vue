@@ -113,7 +113,7 @@
 			display: block;
 			height: 24px;
 			position: relative;
-			background-image: repeating-linear-gradient( 45deg, #000, #000 6px, #fff 8px );
+			background-image: repeating-linear-gradient( 45deg, transparent, transparent 6px, #fff 8px );
 
 			&:after {
 				content: "";

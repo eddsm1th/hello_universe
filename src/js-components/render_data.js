@@ -6,23 +6,19 @@
 
 			// terrain_colours = [
 			// 	{
-			// 		'rgb' : [ 255, 255, 123 ],
+			// 		'rgb' : [ 255, 255, 255 ],
 			// 		'threshold' : 0,
 			// 	},
 			// 	{
-			// 		'rgb' : [ 0, 204, 0 ],
-			// 		'threshold' : .15,
+			// 		'rgb' : [ 0, 0, 255 ],
+			// 		'threshold' : .5,
 			// 	},
 			// 	{
-			// 		'rgb' : [ 0, 102, 0 ],
-			// 		'threshold' : .3,
+			// 		'rgb' : [ 0, 255, 0 ],
+			// 		'threshold' : .75,
 			// 	},
 			// 	{
-			// 		'rgb' : [ 153, 76, 0 ],
-			// 		'threshold' : .6,
-			// 	},
-			// 	{
-			// 		'rgb' : [ 102, 51, 0 ],
+			// 		'rgb' : [ 255, 0, 0 ],
 			// 		'threshold' : 1,
 			// 	}
 			// ],
@@ -38,34 +34,34 @@
 			// ];
 
 			/* Random Colours */
-				terrain_colours = [
-					{
-						'rgb' : [ parseInt( Math.random() * 255 ), parseInt( Math.random() * 255 ), parseInt( Math.random() * 255 ) ],
-						'threshold' : 0,
-					},
-					{
-						'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
-						'threshold' : .15,
-					},
-					{
-						'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
-						'threshold' : .6,
-					},
-					{
-						'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
-						'threshold' : 1,
-					}
-				],
-				water_colours = [
-					{
-						'rgb' : [ parseInt( Math.random() * 255 ), parseInt( Math.random() * 255 ), parseInt( Math.random() * 255 ) ],
-						'threshold' : 0,
-					},
-					{
-						'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
-						'threshold' : 1,
-					}
-				];
+			terrain_colours = [
+				{
+					'rgb' : [ parseInt( Math.random() * 255 ), parseInt( Math.random() * 255 ), parseInt( Math.random() * 255 ) ],
+					'threshold' : 0,
+				},
+				{
+					'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
+					'threshold' : .15,
+				},
+				{
+					'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
+					'threshold' : .6,
+				},
+				{
+					'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
+					'threshold' : 1,
+				}
+			],
+			water_colours = [
+				{
+					'rgb' : [ parseInt( Math.random() * 255 ), parseInt( Math.random() * 255 ), parseInt( Math.random() * 255 ) ],
+					'threshold' : 0,
+				},
+				{
+					'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
+					'threshold' : 1,
+				}
+			];
 			
 	export const render_data = ( grid_data, final_freq_count, layer_options, above_options, below_options ) => {
 		const 	scene = new THREE.Scene(),
@@ -108,7 +104,7 @@
 					// normalMap: new THREE.TextureLoader().load( './src/images/water.png' ),
 					vertexColors: THREE.VertexColors,
 					transparent: true,
-					opacity: .8,
+					opacity: .6,
 					roughness: .3,
 					side: THREE.DoubleSide,
 				} ) : new THREE.MeshBasicMaterial( {

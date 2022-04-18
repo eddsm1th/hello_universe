@@ -31,7 +31,7 @@
                         :is="current_state.name"
                         :solar_system_data="solar_system_data"
                         :celestial_body="selected_celestial_body"
-                        v-on:isLoading="set_is_loading"
+                        @isLoading="set_is_loading"
                     />
                 </div>
             </section>
@@ -58,10 +58,8 @@
         data () {
             return {
                 scene: null,
-
                 is_in_loading_state: false,
                 custom_loading_message: '',
-
                 celestial_body_default_data: {
                     'amp_diff' : 4,
                     'base_freq' : 8,
@@ -70,23 +68,20 @@
                     'radius' : 600,
                     'above' : {
                         'base_amp' : 80,
-                        'amp_bias' : 12,
+                        'amp_bias' : 0,
                     },
                     'below' : {
                         'base_amp' : 100,
-                        'amp_bias' : -80,
+                        'amp_bias' : 0,
                     }
                 },
-
                 placeholder_body: null,
                 instantiated: false,
                 loaded: false,
                 loading: false,
-
                 states_ready: false,
                 states_transitioning: false,
                 state_height: 0,
-
                 states: [
                     {
                         'name' : 'solarSystemEditor',
@@ -97,11 +92,8 @@
                         'active' : false
                     },
                 ],
-
                 selected_celestial_body: {},
-
                 theme_music: ['Thanks for all the fish!','404','¯\\_(ツ)_/¯', 'CYA_TMR','EXTRA LIFE!','FATALITY','Thanks for staying!','...oops','EXECUTE ORDER 66','*SNAP*','Pulling an Alderaan...','blackhole.exe','The 8th day'],
-
                 solar_system_data: {
                     'name' : 'My first solar system',
                     'celestial_bodies' : []
@@ -116,7 +108,7 @@
         },
 
         mounted () {
-            if ( this.solar_system_data.celestial_bodies.length == 0 ) this.solar_system_data.celestial_bodies.push( this.make_celestial_body() );
+            this.solar_system_data.celestial_bodies.push( this.make_celestial_body() );
 
             setTimeout( () => this.instantiated = true, 300 );
             setTimeout( () => this.loaded = true, 500 ); 
@@ -188,9 +180,15 @@
         perspective: 500px;
     }
 
+    canvas {
+        position: absolute;
+        top: 0;
+    }
+
     .main {
         padding: 20px;
-        // position: absolute;
+        position: absolute;
+        z-index: 1;
         width: 80%;
         max-width: 800px;
         display: flex;
@@ -215,7 +213,7 @@
 
         &__inner {
             margin-top: 12px;
-            background-color: #000000;
+            // background-color: #000000;
         }
     }
 
@@ -223,7 +221,7 @@
         @include clipped;
         border: 1px solid #fff;
         color: #fff;
-        background-color: #000;
+        // background-color: #000;
 
         &__title {
             padding: 8px;

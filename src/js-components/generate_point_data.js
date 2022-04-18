@@ -71,7 +71,7 @@ const generate_mesh = ( layer_options, amount_to_skip, row_count, column_count, 
 			let mesh_row = new Array( column_count ).fill( 0 );
 
 			for ( let j = 0; j < column_count; j += amount_to_skip ) { // loop through single row
-				mesh_row[ j ] = ( loop && j == column_count - amount_to_skip ) ? mesh_row[ 0 ] : generate_point_amp( amp_multiplier );
+				mesh_row[ j ] = ( loop && j == column_count - amount_to_skip ) ? mesh_row[ 0 ] : generate_point_amp( amp_multiplier, layer_index );
 				
 				if ( j != 0 && amount_to_skip != 1 ) backfill_points( mesh_row, amount_to_skip, j ); // backfill skipped points in row
 			}
@@ -95,33 +95,66 @@ const generate_mesh = ( layer_options, amount_to_skip, row_count, column_count, 
 const backfill_points = ( mesh_row, amount_to_skip, anchor ) => {
 	const 	previous_point = mesh_row[ anchor - amount_to_skip ],
 			current_point = mesh_row[ anchor ],
-			step = ( previous_point - current_point ) / amount_to_skip;
+			geometry_step = ( previous_point.geometry - current_point.geometry ) / amount_to_skip,
+			terrain_step = ( previous_point.terrain - current_point.terrain ) / amount_to_skip;
 
 	for ( let z = 0; z < amount_to_skip - 1; z ++ ) {
-		mesh_row[ anchor - ( ( amount_to_skip - 1 - z ) ) ] = ( current_point + ( step * ( amount_to_skip - 1 - z ) ) );
+		const	backfill_index = anchor - ( ( amount_to_skip - 1 - z ) ),
+				backfill_multiplier = amount_to_skip - 1 - z;
+
+		mesh_row[ backfill_index ] = {
+			geometry: ( current_point.geometry + ( geometry_step * backfill_multiplier ) ),
+			terrain: ( current_point.terrain + ( terrain_step * backfill_multiplier ) ),
+		};
 	}
 }
 
 // Get an amplitude base on current generation stage
-const generate_point_amp = amp_multiplier => ( ( ( Math.random() * amp_multiplier ) * 2 ) - amp_multiplier );
+const generate_point_amp = ( amp_multiplier, layer_index ) => {
+	let geometry_data = ( ( Math.random() - .5 ) * 2 ) * amp_multiplier 
+	let terrain_data = Math.random();
+
+	if ( layer_index != 0 ) {
+		terrain_data = ( ( terrain_data - .5 ) * amp_multiplier ) * 2;
+	} else {
+		if ( terrain_data < .5 ) {
+			terrain_data = 0;
+		} else {
+			terrain_data = ( terrain_data * 2 ) - 1;
+		}
+	}
+
+	return {
+		geometry : geometry_data,
+		terrain: terrain_data,
+	};
+};
 
 // Creates missing rows
 const create_fill_layer = ( steps, previous_array, next_array, final_freq_count, step_distance_multiplier ) => {
 	return new Array( final_freq_count ).fill().map( ( i, index ) => {
-		const 	y_distance_in_points = ( next_array[ index ] - previous_array[ index ] ) * -1,
-				step_distance = y_distance_in_points / step_distance_multiplier;
+		const 	geometry_diff = ( next_array[ index ].geometry - previous_array[ index ].geometry ) * -1,
+				terrain_diff = ( next_array[ index ].terrain - previous_array[ index ].terrain ) * -1,
+				geometry_distance = geometry_diff / step_distance_multiplier,
+				terrain_distance = terrain_diff / step_distance_multiplier;
 		
-		return previous_array[ index ] - ( step_distance * steps );
+		return {
+			geometry: previous_array[ index ].geometry - ( geometry_distance * steps ),
+			terrain: previous_array[ index ].terrain - ( terrain_distance * steps ),
+		}
 	} );
 }
 
 // Add all layer amp values
 const get_total_amp = ( layer_options, side, index, sub_index ) => {
+	const key = side[ 'layer_0' ][ index ][ sub_index ].geometry < 0 ? 'geometry' : 'terrain';
+
 	let placeholder_amp = 0;
 
 	for ( let i = 0; i < layer_options.base_layers; i ++ ) {
-		placeholder_amp += side[ 'layer_' + i ][ index ][ sub_index ];
+		placeholder_amp += side[ 'layer_' + i ][ index ][ sub_index ][ key ]
 	}
 
 	return placeholder_amp;
 }
+

@@ -11,9 +11,11 @@ export const apply_terrain_to_celestial_body = ( grid_data, layer_options, above
 
 			for ( let x = 0, x_ = row.length; x < x_; x ++ ) {
 				const 	point = row[ x ],
-						is_above = point.amp_value > 0;
+						is_above = point.amp_value > 0,
+						weighted_amp_value = get_amp_bias( point.amp_value /= max_amp, ( is_above ? above_bias_var : below_bias_var ), is_above ? 1 : -1 ),
+						amp_multiplier = ( is_above ? above_options.base_amp : below_options.base_amp );
 
-				point.amp_value = get_amp_bias( point.amp_value /= max_amp, ( is_above ? above_bias_var : below_bias_var ), is_above ? 1 : -1 ) * ( is_above ? above_options.base_amp : below_options.base_amp );
+				point.amp_value = weighted_amp_value * amp_multiplier;
 			}
 		}
 	}
