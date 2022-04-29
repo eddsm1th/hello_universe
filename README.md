@@ -34,6 +34,12 @@ FEATURES
 	- invert terrain noise to use ridge noise(?)
 	- different geometries for different layers to render when further away (based on body radius?)
 	- update how bodies are stored in the app
+	- solar system center point anchor
+	- solar system overview screen
+	- gravity
+	- multiple bodies at once
+	- ???
+	- profit
 ```
 
 For detailed explanation on how things work, consult the [docs for vue-loader](http://vuejs.github.io/vue-loader).
