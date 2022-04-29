@@ -61,7 +61,28 @@
 					'rgb' : [ Math.random() * 255, Math.random() * 255, Math.random() * 255 ],
 					'threshold' : 1,
 				}
-			];
+			],
+			material = ( !wireframe ? new THREE.MeshStandardMaterial( {
+				// normalMap: new THREE.TextureLoader().load( './src/images/land.png' ),
+				vertexColors: THREE.FaceColors,
+				side: THREE.DoubleSide,
+				roughness: .8,
+			} ) : new THREE.MeshBasicMaterial( {
+				color: 0x00ff00,
+				wireframe: true,
+			} ) ),
+			water_geometry = new THREE.Geometry(),
+			water_material = ( !wireframe ? new THREE.MeshStandardMaterial( {
+				// normalMap: new THREE.TextureLoader().load( './src/images/water.png' ),
+				vertexColors: THREE.VertexColors,
+				transparent: true,
+				opacity: .6,
+				roughness: .3,
+				side: THREE.DoubleSide,
+			} ) : new THREE.MeshBasicMaterial( {
+				color: 0xff0000,
+				wireframe: true,
+			} ) );
 			
 	export const render_data = ( grid_data, final_freq_count, layer_options, above_options, below_options ) => {
 		const 	scene = new THREE.Scene(),
@@ -89,28 +110,7 @@
 	}
 
 	const plot_points = ( grid_data, final_freq_count, layer_options, scene, above_options, below_options ) => {
-		const 	geometry = new THREE.Geometry(),
-				material = ( !wireframe ? new THREE.MeshStandardMaterial( {
-					// normalMap: new THREE.TextureLoader().load( './src/images/land.png' ),
-					vertexColors: THREE.FaceColors,
-					side: THREE.DoubleSide,
-					roughness: .8,
-				} ) : new THREE.MeshBasicMaterial( {
-					color: 0x00ff00,
-					wireframe: true,
-				} ) ),
-				water_geometry = new THREE.Geometry(),
-				water_material = ( !wireframe ? new THREE.MeshStandardMaterial( {
-					// normalMap: new THREE.TextureLoader().load( './src/images/water.png' ),
-					vertexColors: THREE.VertexColors,
-					transparent: true,
-					opacity: .6,
-					roughness: .3,
-					side: THREE.DoubleSide,
-				} ) : new THREE.MeshBasicMaterial( {
-					color: 0xff0000,
-					wireframe: true,
-				} ) );
+		const 	geometry = new THREE.Geometry();
 
 		grid_data.forEach( ( { data } ) => {
 			data.flat().forEach( item => {
@@ -172,13 +172,13 @@
 	}
 
 	const add_face_to_goemetry = ( points, geometry, water_geometry, above_options, below_options ) => {
-		points.avg_amplitude = [ points.oo.amp_value, points.oi.amp_value, points.io.amp_value, points.ii.amp_value ].reduce( ( a, b ) => a + b ) / 4
+		points.avg_amplitude = ( points.oo.amp_value + points.oi.amp_value + points.io.amp_value + points.ii.amp_value ) / 4
 
 		if ( use_earth ) {
 			points.terrain_true_middle = {
-				x : [ points.oo.x, points.oi.x, points.io.x, points.ii.x ].reduce( ( a, b ) => a + b ) / 4,
-				y : [ points.oo.y, points.oi.y, points.io.y, points.ii.y ].reduce( ( a, b ) => a + b ) / 4,
-				z : [ points.oo.z, points.oi.z, points.io.z, points.ii.z ].reduce( ( a, b ) => a + b ) / 4,
+				x : ( points.oo.x + points.oi.x + points.io.x + points.ii.x ) / 4,
+				y : ( points.oo.y + points.oi.y + points.io.y + points.ii.y ) / 4,
+				z : ( points.oo.z + points.oi.z + points.io.z + points.ii.z ) / 4,
 			};
 
 			geometry.vertices.push( new THREE.Vector3( points.terrain_true_middle.x, points.terrain_true_middle.y, points.terrain_true_middle.z ) );
@@ -191,9 +191,9 @@
 
 		if ( use_water && ( points.oo.amp_value <= 0 || points.oi.amp_value <= 0 || points.ii.amp_value <= 0 || points.io.amp_value <= 0 ) ) {
 			points.water_true_middle = {
-				x : [ points.oo.base_x, points.oi.base_x, points.io.base_x, points.ii.base_x ].reduce( ( a, b ) => a + b ) / 4,
-				y : [ points.oo.base_y, points.oi.base_y, points.io.base_y, points.ii.base_y ].reduce( ( a, b ) => a + b ) / 4,
-				z : [ points.oo.base_z, points.oi.base_z, points.io.base_z, points.ii.base_z ].reduce( ( a, b ) => a + b ) / 4,
+				x : ( points.oo.base_x + points.oi.base_x + points.io.base_x + points.ii.base_x ) / 4,
+				y : ( points.oo.base_y + points.oi.base_y + points.io.base_y + points.ii.base_y ) / 4,
+				z : ( points.oo.base_z + points.oi.base_z + points.io.base_z + points.ii.base_z ) / 4,
 			};
 
 			water_geometry.vertices.push( new THREE.Vector3( points.water_true_middle.x, points.water_true_middle.y, points.water_true_middle.z ) );
